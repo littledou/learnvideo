@@ -1,0 +1,3 @@
+include ':newffmpeg'
+include ':app', ':learnaudio'
+rootProject.name = "LearnVideo"

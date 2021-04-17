@@ -1,0 +1,14 @@
+prefix=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a
+exec_prefix=${prefix}
+libdir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/lib
+includedir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/include
+
+Name: libavcodec
+Description: FFmpeg codec library
+Version: 58.136.101
+Requires: libavutil >= 56.72.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavcodec -pthread -lm -lfdk-aac -lmp3lame -lm -lx264 -pthread -lm
+Libs.private: 
+Cflags: -I${includedir}

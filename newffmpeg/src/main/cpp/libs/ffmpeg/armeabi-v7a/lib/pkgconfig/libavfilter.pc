@@ -1,0 +1,14 @@
+prefix=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a
+exec_prefix=${prefix}
+libdir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/lib
+includedir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/include
+
+Name: libavfilter
+Description: FFmpeg audio/video filtering library
+Version: 7.111.100
+Requires: libavutil >= 56.72.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavfilter -pthread -lm
+Libs.private: 
+Cflags: -I${includedir}

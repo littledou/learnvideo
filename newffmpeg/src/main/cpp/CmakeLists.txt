@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.10.2)
+project("kotlinnativetest")
+
+#加载头文件
+include_directories(./include)
+include_directories(libs/ffmpeg/armeabi-v7a/include)
+include_directories(libs/x264lib/armeabi-v7a/include)
+include_directories(libs/lamelib/armeabi-v7a/include)
+include_directories(libs/fdk-aac/armeabi-v7a/include)
+
+#加载静态依赖库
+LINK_DIRECTORIES(libs/ffmpeg/armeabi-v7a/lib)
+LINK_DIRECTORIES(libs/x264lib/armeabi-v7a/lib)
+LINK_DIRECTORIES(libs/lamelib/armeabi-v7a/lib)
+LINK_DIRECTORIES(libs/fdk-aac/armeabi-v7a/lib)
+
+
+add_library(ffuse SHARED source/ffuse.cpp)
+
+find_library(log-lib log)
+find_library(z-lib z)
+
+target_link_libraries(
+        ffuse
+        libavformat.a
+        libavcodec.a
+        libavfilter.a
+        libavutil.a
+        libswresample.a
+        libswscale.a
+        libmp3lame.a
+        libx264.a
+        libfdk-aac.a
+        ${z-lib}
+        ${log-lib})

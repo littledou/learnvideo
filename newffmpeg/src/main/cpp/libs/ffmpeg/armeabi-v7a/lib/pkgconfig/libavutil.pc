@@ -1,0 +1,14 @@
+prefix=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a
+exec_prefix=${prefix}
+libdir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/lib
+includedir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 56.72.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil -pthread -lm
+Libs.private: 
+Cflags: -I${includedir}

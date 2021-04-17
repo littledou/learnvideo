@@ -1,0 +1,14 @@
+prefix=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a
+exec_prefix=${prefix}
+libdir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/lib
+includedir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 58.78.100
+Requires: libavcodec >= 58.136.101, libavutil >= 56.72.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavformat -lm -lz
+Libs.private: 
+Cflags: -I${includedir}
