@@ -16,6 +16,7 @@ project("kotlinnativetest")
 
 #加载头文件
 include_directories(mp3)
+include_directories(opelsles)
 include_directories(lib/lamelib/armeabi-v7a/include)
 
 #加载静态依赖库
@@ -31,6 +32,7 @@ add_library( # Sets the name of the library.
         # Provides a relative path to your source file(s).
         native-lib.cpp
         mp3/mp3_encoder.cpp
+        opelsles/OpenSLESContext.cpp
         )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -50,9 +52,12 @@ find_library( # Sets the name of the path variable.
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
+find_library(libOpenSLES OpenSLES)
+
 target_link_libraries( # Specifies the target library.
         native-lib
         libmp3lame.a
         # Links the target library to the log library
         # included in the NDK.
+        ${libOpenSLES}
         ${log-lib})

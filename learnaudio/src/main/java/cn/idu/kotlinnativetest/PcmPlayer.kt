@@ -15,14 +15,20 @@ class PcmPlayer(private val path: String) : Thread() {
 
         val pcmFile = File(path);
 
+        //bufferSizeInBytes: 音频缓冲区大小
+        val bufferSizeInBytes =
+            AudioTrack.getMinBufferSize(SAMPLE_RATE_IN_HZ, CHANNEL, AUDIO_FORMAT)
         val audioTrack = AudioTrack(
             AudioManager.STREAM_MUSIC,
             SAMPLE_RATE_IN_HZ,
             CHANNEL,
             AUDIO_FORMAT,
-            pcmFile.length().toInt(),
-            AudioTrack.MODE_STATIC
+            bufferSizeInBytes,
+            AudioTrack.MODE_STREAM//流式可以立刻play然后等流进来，static式必须写入完成后再play
         )
+
+        audioTrack.play()
+
         val fis = FileInputStream(pcmFile)
         val buffer = ByteArray(1024 * 1024)
 
@@ -32,8 +38,8 @@ class PcmPlayer(private val path: String) : Thread() {
             audioTrack.write(buffer, 0, len)
         }
 
-        audioTrack.play()
-
+        audioTrack.stop()
+        audioTrack.release()
     }
 
 }

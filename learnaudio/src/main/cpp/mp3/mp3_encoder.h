@@ -10,7 +10,7 @@
 #include <lame/lame.h>
 
 /**
- * 示例：
+ * 示例：pcm转码为mp3
  */
 class Mp3Encoder {
 
