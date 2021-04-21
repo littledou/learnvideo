@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "cn.idu.learnvideo"
-        minSdkVersion 21
+        minSdkVersion 29
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"

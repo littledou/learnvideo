@@ -45,6 +45,7 @@ fun MediaMuxer.demuxerMedia(extractor: MediaExtractor, frameIndex: Int) {
     writeMediaBuffer(extractor, format, trackIndex)
 
     extractor.unselectTrack(frameIndex)
+    release()
 }
 
 
