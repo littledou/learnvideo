@@ -12,7 +12,7 @@
  * 5. 刷新window，将2D纹理提交给OpenGL ES渲染
  *
  */
-//TODO ???: 暂未达成自由resize，
+//TODO ???: 暂未达成自由resize，另外现在并未开辟新的线程来执行OpenGL ES渲染
 PngPreviewController::PngPreviewController() {
     pngPicDecoder = new PngPicDecoder();
 

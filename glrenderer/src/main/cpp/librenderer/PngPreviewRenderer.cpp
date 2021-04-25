@@ -50,10 +50,16 @@ void PngPreviewRenderer::render(PngPreviewTexture *pTexture, int width, int heig
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glUseProgram(program);
-    static const GLfloat _vertices[] = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f};
+    /**
+     * OpenGL物体坐标系
+     */
+    static const GLfloat _vertices[] = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
     glVertexAttribPointer(ATTRIBUTE_VERTEX, 2, GL_FLOAT, 0, 0, _vertices);
     glEnableVertexAttribArray(ATTRIBUTE_VERTEX);
-    static const GLfloat texCoords[] = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f};
+    /**
+     * 计算机二维纹理坐标
+     */
+    static const GLfloat texCoords[] = {0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f};
     glVertexAttribPointer(ATTRIBUTE_TEXCOORD, 2, GL_FLOAT, 0, 0, texCoords);
     glEnableVertexAttribArray(ATTRIBUTE_TEXCOORD);
     pTexture->bindTexture(uniformSampler);
