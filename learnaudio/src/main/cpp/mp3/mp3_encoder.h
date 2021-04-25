@@ -2,8 +2,8 @@
 // Created by loki on 2021/4/14.
 //
 
-#ifndef KOTLINNATIVETEST_MP3_ENCODER_H
-#define KOTLINNATIVETEST_MP3_ENCODER_H
+#ifndef LEARNAUDIO_MP3_ENCODER_H
+#define LEARNAUDIO_MP3_ENCODER_H
 
 
 #include <cstdio>
@@ -33,4 +33,4 @@ public:
 };
 
 
-#endif //KOTLINNATIVETEST_MP3_ENCODER_H
+#endif //LEARNAUDIO_MP3_ENCODER_H

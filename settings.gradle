@@ -1,3 +1,4 @@
+include ':glrenderer'
 include ':newffmpeg'
 include ':app', ':learnaudio'
 rootProject.name = "LearnVideo"
