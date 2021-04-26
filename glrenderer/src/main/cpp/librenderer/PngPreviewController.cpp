@@ -7,7 +7,7 @@
 /**
  * 1. 创建EGL环境
  * 2. 将EGL环境与Java端传过来端Surface绑定，
- * 3. 创建2D纹理
+ * 3. 创建2D纹理,创建渲染器
  * 4. 加载PNG数据源，并通过glTexImage2D方法绑定到2D纹理上
  * 5. 刷新window，将2D纹理提交给OpenGL ES渲染
  *

@@ -1,4 +1,4 @@
-package cn.idu.learnvideo
+package cn.idu.learnvideo.codec
 
 import android.content.Context
 import android.media.*

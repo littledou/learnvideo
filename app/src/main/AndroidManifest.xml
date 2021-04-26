@@ -13,6 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LearnVideo">
+        <activity android:name=".opengles.GlSample02ImageActivity"></activity>
+        <activity android:name=".opengles.GlSample01TriangleActivity" />
         <activity android:name=".renderimg.RenderImageActivity" />
         <activity android:name=".camera.CameraCaptureActivity" />
         <activity android:name=".main.MainActivity">

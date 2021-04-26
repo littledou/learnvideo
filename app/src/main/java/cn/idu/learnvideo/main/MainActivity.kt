@@ -1,19 +1,18 @@
 package cn.idu.learnvideo.main
 
 import android.Manifest
-import android.app.Activity
 import android.view.View
 import androidx.recyclerview.widget.ConcatAdapter
-import cn.idu.glrenderer.EGLJni
-import cn.idu.learnvideo.MediaExtractorUtil.Companion.test
 import cn.idu.learnvideo.camera.CameraCaptureActivity
 import cn.idu.learnvideo.databinding.ActivityMainBinding
+import cn.idu.learnvideo.opengles.GlSample01TriangleActivity
+import cn.idu.learnvideo.opengles.GlSample02ImageActivity
 import cn.idu.learnvideo.renderimg.RenderImageActivity
 import cn.readsense.module.base.BaseCoreActivity
 
 class MainActivity : BaseCoreActivity() {
 
-    var funcArray = arrayOf("视频YUV录制", "图片渲染")
+    var funcArray = arrayOf("视频YUV录制", "EGL图片渲染", "绘制三角形", "Java图片渲染")
 
     lateinit var binding: ActivityMainBinding
     override fun getLayoutView(): View {
@@ -41,6 +40,12 @@ class MainActivity : BaseCoreActivity() {
             }
             1 -> {
                 openPage(RenderImageActivity::class.java)
+            }
+            2 -> {
+                openPage(GlSample01TriangleActivity::class.java)
+            }
+            3->{
+                openPage(GlSample02ImageActivity::class.java)
             }
         }
 
