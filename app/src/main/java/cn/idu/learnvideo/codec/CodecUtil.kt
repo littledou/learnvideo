@@ -2,6 +2,7 @@ package cn.idu.learnvideo.codec
 
 import android.media.MediaCodecInfo
 import android.media.MediaCodecList
+import android.view.Surface
 
 class CodecUtil {
 
@@ -72,6 +73,12 @@ class CodecUtil {
                                 "       isHardwareAccelerated: ${codecInfo.isHardwareAccelerated}" +
                                 ""
                     )
+            }
+        }
+
+        fun newCodecRunnable(path: String, surface: Surface): Runnable {
+            return Runnable {
+
             }
         }
     }

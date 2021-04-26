@@ -4,6 +4,7 @@ import android.opengl.GLSurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.FileUtils
+import android.view.Surface
 import android.view.View
 import cn.idu.learnvideo.databinding.ActivityGlSample02ImageBinding
 import cn.idu.learnvideo.opengles.renderer.SampleRenderer

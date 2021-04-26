@@ -1,6 +1,9 @@
 package cn.idu.learnvideo.opengles.texture
 
 import android.graphics.Bitmap
+import android.graphics.SurfaceTexture
+import android.hardware.Camera
+import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.opengl.GLUtils
 import cn.readsense.module.gleshelper.ShaderUtil
@@ -16,7 +19,7 @@ import java.nio.FloatBuffer
  * 3. 绘制，绑定2D纹理
  * 4. 释放
  */
-class ImageTexture(val mBitmap: Bitmap) : ITexture {
+class CameraTexture() : ITexture {
 
     private var program = -1
     private val vertexShaderSource = "attribute vec4 aPosition;" +
@@ -27,11 +30,15 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
             "   vTexCoord = aTexCoord;" +
             "}"
 
-    private val fragShaderSource = "precision mediump float;" +
+    //拓展纹理
+    private val fragShaderSource = "#extension GL_OES_EGL_image_external : require\n" +
+            "precision mediump float;" +
             "varying vec2 vTexCoord;" +
-            "uniform sampler2D yuvTexSampler;" +
+            "uniform samplerExternalOES yuvTexSampler;" +
             "void main(){" +
-            "   gl_FragColor = texture2D(yuvTexSampler, vTexCoord);" +
+            "  vec4 color =  texture2D(yuvTexSampler, vTexCoord);" +
+            "  float gray = (color.r + color.g + color.b)/3.0;" +
+            "  gl_FragColor = vec4(gray, gray, gray, 1.0);" +
             "}"
 
     private var aPositionIndex = 0
@@ -76,6 +83,14 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
     private val vertexBuffer = fullFloatBuffer(vertexPosition)
     private var fragBuffer = fullFloatBuffer(aTexCoord)
     private var textureID = -1
+    private var surfaceTexture: SurfaceTexture? = null
+
+    //高阶函数
+    private var sftCB: ((SurfaceTexture) -> Unit)? = null
+
+    fun getSurfaceTexture(cb: (st: SurfaceTexture) -> Unit) {
+        sftCB = cb
+    }
 
     override fun createTexture() {
         program = ShaderUtil.createProgram(vertexShaderSource, fragShaderSource)
@@ -87,28 +102,33 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
         var texture = IntArray(1)
         GLES20.glGenTextures(1, texture, 0)
         textureID = texture[0]
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID)
+
+        //视频的渲染需要SurfaceTexture来更新画面
+        surfaceTexture = SurfaceTexture(textureID)
+
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureID)
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
             GLES20.GL_TEXTURE_MAG_FILTER,
             GLES20.GL_NEAREST
         )//放大双线性过滤
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
             GLES20.GL_TEXTURE_MIN_FILTER,
             GLES20.GL_NEAREST
         )//缩小双线性过滤
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
             GLES20.GL_TEXTURE_WRAP_S,
             GLES20.GL_CLAMP_TO_EDGE
         )//S轴归一化，纹理坐标过1归1，过0归0
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
+            GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
             GLES20.GL_TEXTURE_WRAP_T,
             GLES20.GL_CLAMP_TO_EDGE
         )//T轴归一化
 
+        sftCB?.invoke(surfaceTexture!!)
     }
 
     override fun drawFrame() {
@@ -122,17 +142,16 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
         //2D纹理三、绘制2D纹理
         //2D纹理二、激活纹理并向2D纹理上绑定数据
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)//激活指定纹理单元
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID)//绑定纹理ID到纹理单元
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureID)//绑定纹理ID到纹理单元
         GLES20.glUniform1i(sampler2DHandler, 0);//将激活到纹理单元传递到着色器里
         //绑定位图到被激活的纹理单元
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, mBitmap, 0)
+        surfaceTexture?.updateTexImage()
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }
 
 
     override fun release() {
-
     }
 
     fun fullFloatBuffer(arr: FloatArray): FloatBuffer {
