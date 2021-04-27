@@ -47,9 +47,9 @@ class GlSample03CameraActivity : BaseCoreActivity() {
                     ) / 8
                 )
             )
-//            camera?.setPreviewCallbackWithBuffer { data: ByteArray, camera: Camera ->
-//                camera.addCallbackBuffer(data)
-//            }
+            camera?.setPreviewCallbackWithBuffer { data: ByteArray, camera: Camera ->
+                camera.addCallbackBuffer(data)
+            }
             camera?.startPreview()
 
         }

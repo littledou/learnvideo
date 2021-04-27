@@ -19,7 +19,7 @@ class GlSample01TriangleActivity : BaseCoreActivity() {
         binding.glSurfaceview.setEGLContextClientVersion(2)
         renderer = SampleRenderer(TriangleTexture())
         binding.glSurfaceview.setRenderer(renderer)
-        binding.glSurfaceview.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+        binding.glSurfaceview.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
     }
 
     override fun onDestroy() {

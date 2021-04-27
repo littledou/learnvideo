@@ -48,6 +48,7 @@ class TriangleTexture : ITexture {
         GLES20.glVertexAttribPointer(aPositionIndex, 2, GLES20.GL_FLOAT, false, 0, vertexBuffer)
         GLES20.glEnableVertexAttribArray(aPositionIndex)
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 3)
+        GLES20.glDisableVertexAttribArray(aPositionIndex)
     }
 
     override fun release() {
