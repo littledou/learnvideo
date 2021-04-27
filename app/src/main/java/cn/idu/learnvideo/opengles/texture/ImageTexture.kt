@@ -119,7 +119,6 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
         GLES20.glVertexAttribPointer(aTexCoordIndex, 2, GLES20.GL_FLOAT, false, 0, fragBuffer)
         GLES20.glEnableVertexAttribArray(aTexCoordIndex)
 
-        //2D纹理三、绘制2D纹理
         //2D纹理二、激活纹理并向2D纹理上绑定数据
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)//激活指定纹理单元
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID)//绑定纹理ID到纹理单元
