@@ -44,10 +44,10 @@ class CameraTexture() : ITexture {
             "}"
 
     private var orthoMatrix = FloatArray(16)
-    private var worldWidth: Int = -1
-    private var worldHeight: Int = -1
-    private var textureWidth: Int = -1
-    private var textureHeight: Int = -1
+    private var worldWidth: Float = -1f
+    private var worldHeight: Float = -1f
+    private var textureWidth: Float = -1f
+    private var textureHeight: Float = -1f
     private var isFullScreen = false;
 
 
@@ -86,10 +86,10 @@ class CameraTexture() : ITexture {
      * 0, 1   1, 1
      */
     private val aTexCoord = floatArrayOf(
-        0.0f, 1.0f,
         0.0f, 0.0f,
-        1.0f, 1.0f,
-        1.0f, 0.0f
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f
     )
     private val vertexBuffer = fullFloatBuffer(vertexPosition)
     private var fragBuffer = fullFloatBuffer(aTexCoord)
@@ -174,22 +174,22 @@ class CameraTexture() : ITexture {
             //高度拉伸: 世界的宽高比大于纹理的宽高比，纹理高度是满屏，宽度拉伸后两边有黑边
             //最终该值为纹理从满屏压缩值指定值的倍数
             if (worldWidth / worldHeight > textureWidth / textureHeight) {
-                left = -worldWidth / (textureWidth * worldHeight / textureHeight).toFloat()
-                right = worldWidth / (textureWidth * worldHeight / textureHeight).toFloat()
+                left = -worldWidth / (textureWidth * worldHeight / textureHeight)
+                right = worldWidth / (textureWidth * worldHeight / textureHeight)
             }
             //宽度拉伸：纹理宽度满屏，高度拉伸后上下有黑边
             //最终该值为纹理从满屏压缩值指定值的倍数
             if (worldWidth / worldHeight < textureWidth / textureHeight) {
-                buttom = -worldHeight / (textureHeight * worldWidth / textureWidth).toFloat()
-                top = worldHeight / (textureHeight * worldWidth / textureWidth).toFloat()
+                buttom = -worldHeight / (textureHeight * worldWidth / textureWidth)
+                top = worldHeight / (textureHeight * worldWidth / textureWidth)
             }
         } else {
             //模式二：在视口中全屏显示，允许越界裁剪
             //宽度拉伸：视口宽高比大于纹理宽高比，纹理宽度等于视口宽度时，纹理高度越界，上下被裁剪掉
             //左右为1，上下为小于1, 上下分别为纹理放大后的度到底是视口高度的多少倍
             if (worldWidth / worldHeight > textureWidth / textureHeight) {
-                buttom = -textureHeight * (worldWidth / textureWidth) / worldHeight.toFloat()
-                top = textureHeight * (worldWidth / textureWidth) / worldHeight.toFloat()
+                buttom = -textureHeight * (worldWidth / textureWidth) / worldHeight
+                top = textureHeight * (worldWidth / textureWidth) / worldHeight
                 //反过来，最终该值为纹理能够显示的比例
                 buttom = 1 / buttom
                 top = 1 / top
@@ -210,19 +210,25 @@ class CameraTexture() : ITexture {
             orthoMatrix, 0,
             left, right,
             buttom, top,
-            -1f, 3f
+            -1f, 6f
         )
+//        Matrix.setLookAtM(
+//            orthoMatrix, 0,
+//            0f, 0f, 5f,
+//            0f, 0f, 0f,
+//            0f, 1f, 0f
+//        )
 
     }
 
     override fun setWorldSize(w: Int, h: Int) {
-        worldWidth = w
-        worldHeight = h
+        worldWidth = w.toFloat()
+        worldHeight = h.toFloat()
     }
 
     override fun setTextureSize(w: Int, h: Int) {
-        textureWidth = w
-        textureHeight = h
+        textureWidth = w.toFloat()
+        textureHeight = h.toFloat()
     }
 
 

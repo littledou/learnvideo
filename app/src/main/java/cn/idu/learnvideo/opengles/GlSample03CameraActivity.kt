@@ -26,7 +26,7 @@ class GlSample03CameraActivity : BaseCoreActivity() {
 //
         binding.glSurfaceview.setEGLContextClientVersion(2)
         val videoTexture = CameraTexture()
-        videoTexture.setTextureSize(640, 480)
+        videoTexture.setTextureSize(480, 640)
         renderer = SampleRenderer(videoTexture)
         binding.glSurfaceview.setRenderer(renderer)
         binding.glSurfaceview.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
