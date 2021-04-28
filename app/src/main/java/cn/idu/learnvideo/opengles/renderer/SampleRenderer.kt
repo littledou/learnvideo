@@ -20,6 +20,7 @@ class SampleRenderer(private val texture: ITexture) : GLSurfaceView.Renderer {
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
+        texture.setWorldSize(width, height)
     }
 
     override fun onDrawFrame(gl: GL10?) {

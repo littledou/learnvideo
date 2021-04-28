@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                abiFilters "armeabi-v7a"
+//                abiFilters "armeabi-v7a"
                 cppFlags ""
             }
         }

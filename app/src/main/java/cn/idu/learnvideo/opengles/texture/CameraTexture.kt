@@ -6,6 +6,7 @@ import android.hardware.Camera
 import android.opengl.GLES11Ext
 import android.opengl.GLES20
 import android.opengl.GLUtils
+import android.opengl.Matrix
 import cn.readsense.module.gleshelper.ShaderUtil
 import cn.readsense.module.util.BitmapUtil
 import java.nio.ByteBuffer
@@ -23,10 +24,11 @@ class CameraTexture() : ITexture {
 
     private var program = -1
     private val vertexShaderSource = "attribute vec4 aPosition;" +
+            "uniform mat4 uMatrix;" +
             "attribute vec2 aTexCoord;" +
             "varying vec2 vTexCoord;" +
             "void main(){" +
-            "   gl_Position = aPosition;" +
+            "   gl_Position = aPosition*uMatrix;" +
             "   vTexCoord = aTexCoord;" +
             "}"
 
@@ -41,8 +43,17 @@ class CameraTexture() : ITexture {
             "  gl_FragColor = vec4(gray, gray, gray, 1.0);" +
             "}"
 
+    private var orthoMatrix = FloatArray(16)
+    private var worldWidth: Int = -1
+    private var worldHeight: Int = -1
+    private var textureWidth: Int = -1
+    private var textureHeight: Int = -1
+    private var isFullScreen = false;
+
+
     private var aPositionIndex = 0
     private var aTexCoordIndex = 1
+    private var uMartixIndex = 2
     private var sampler2DHandler = -1
 
     /**
@@ -96,6 +107,7 @@ class CameraTexture() : ITexture {
         program = ShaderUtil.createProgram(vertexShaderSource, fragShaderSource)
         GLES20.glBindAttribLocation(program, aPositionIndex, "aPosition")
         GLES20.glBindAttribLocation(program, aTexCoordIndex, "aTexCoord")
+        uMartixIndex = GLES20.glGetUniformLocation(program, "uMatrix");
         sampler2DHandler = GLES20.glGetUniformLocation(program, "yuvTexSampler")
 
         //2D纹理一、创建2D纹理
@@ -132,6 +144,7 @@ class CameraTexture() : ITexture {
     }
 
     override fun drawFrame() {
+        initOrthoMatrix()
         GLES20.glUseProgram(program)
 
         GLES20.glVertexAttribPointer(aPositionIndex, 2, GLES20.GL_FLOAT, false, 0, vertexBuffer)
@@ -139,6 +152,7 @@ class CameraTexture() : ITexture {
         GLES20.glVertexAttribPointer(aTexCoordIndex, 2, GLES20.GL_FLOAT, false, 0, fragBuffer)
         GLES20.glEnableVertexAttribArray(aTexCoordIndex)
 
+        GLES20.glUniformMatrix4fv(uMartixIndex, 1, false, orthoMatrix, 0)
         //2D纹理三、绘制2D纹理
         //2D纹理二、激活纹理并向2D纹理上绑定数据
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)//激活指定纹理单元
@@ -150,8 +164,70 @@ class CameraTexture() : ITexture {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }
 
+    private fun initOrthoMatrix() {
+        var left = -1f
+        var right = 1f
+        var buttom = -1f
+        var top = 1f
+        //模式一：将纹理全部显示到视口里，不允许裁剪
+        if (!isFullScreen) {
+            //高度拉伸: 世界的宽高比大于纹理的宽高比，纹理高度是满屏，宽度拉伸后两边有黑边
+            //最终该值为纹理从满屏压缩值指定值的倍数
+            if (worldWidth / worldHeight > textureWidth / textureHeight) {
+                left = -worldWidth / (textureWidth * worldHeight / textureHeight).toFloat()
+                right = worldWidth / (textureWidth * worldHeight / textureHeight).toFloat()
+            }
+            //宽度拉伸：纹理宽度满屏，高度拉伸后上下有黑边
+            //最终该值为纹理从满屏压缩值指定值的倍数
+            if (worldWidth / worldHeight < textureWidth / textureHeight) {
+                buttom = -worldHeight / (textureHeight * worldWidth / textureWidth).toFloat()
+                top = worldHeight / (textureHeight * worldWidth / textureWidth).toFloat()
+            }
+        } else {
+            //模式二：在视口中全屏显示，允许越界裁剪
+            //宽度拉伸：视口宽高比大于纹理宽高比，纹理宽度等于视口宽度时，纹理高度越界，上下被裁剪掉
+            //左右为1，上下为小于1, 上下分别为纹理放大后的度到底是视口高度的多少倍
+            if (worldWidth / worldHeight > textureWidth / textureHeight) {
+                buttom = -textureHeight * (worldWidth / textureWidth) / worldHeight.toFloat()
+                top = textureHeight * (worldWidth / textureWidth) / worldHeight.toFloat()
+                //反过来，最终该值为纹理能够显示的比例
+                buttom = 1 / buttom
+                top = 1 / top
+            }
+            //高度拉伸：视口宽高比小于纹理宽高比，高度满屏，拉伸后的宽度会越界视口范围，相当于被裁剪里左右两边
+            //上下为1， 左右小于1，左右分别为纹理拉伸后，纹理宽度到底是视口宽度的多少倍
+            if (worldWidth / worldHeight < textureWidth / textureHeight) {
+                left = -textureWidth * (worldHeight / textureHeight) / worldWidth.toFloat()
+                right = textureWidth * (worldHeight / textureHeight) / worldWidth.toFloat()
+                //反过来，最终该值为纹理能够显示的比例
+                left = 1 / left
+                right = 1 / right
+            }
+        }
+        println("$left , $right, $buttom, $top")
+
+        Matrix.orthoM(
+            orthoMatrix, 0,
+            left, right,
+            buttom, top,
+            -1f, 3f
+        )
+
+    }
+
+    override fun setWorldSize(w: Int, h: Int) {
+        worldWidth = w
+        worldHeight = h
+    }
+
+    override fun setTextureSize(w: Int, h: Int) {
+        textureWidth = w
+        textureHeight = h
+    }
+
 
     override fun release() {
+
     }
 
     fun fullFloatBuffer(arr: FloatArray): FloatBuffer {
