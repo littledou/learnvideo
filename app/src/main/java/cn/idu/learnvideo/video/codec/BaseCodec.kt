@@ -28,11 +28,10 @@ abstract class BaseCodec : Thread(), ICodec {
         }
     }
 
-    override fun dealWith(data: ByteArray) {
-
-    }
+    override fun dealWith(data: ByteArray) {}
 
     override fun stopWorld() {
+        inBlockingQueue.clear()
         threadRunning = false;
         interrupt()
         join(1000)

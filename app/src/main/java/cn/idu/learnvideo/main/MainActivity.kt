@@ -44,8 +44,8 @@ class MainActivity : BaseCoreActivity() {
     fun funcClick(index: Int) {
         when (index) {
             0 -> {
-//                openPage(CameraCaptureActivity::class.java)
-                CodecSample.convertYuv2Mp4_2(context = baseContext)
+                openPage(CameraCaptureActivity::class.java)
+//                CodecSample.convertYuv2Mp4_2(context = baseContext)
             }
             1 -> {
                 openPage(RenderImageActivity::class.java)
