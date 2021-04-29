@@ -9,6 +9,7 @@ import cn.idu.learnvideo.opengles.GlSample01TriangleActivity
 import cn.idu.learnvideo.opengles.GlSample02ImageActivity
 import cn.idu.learnvideo.opengles.GlSample03CameraActivity
 import cn.idu.learnvideo.renderimg.RenderImageActivity
+import cn.idu.learnvideo.video.codec.sample.CodecSample
 import cn.readsense.module.base.BaseCoreActivity
 
 class MainActivity : BaseCoreActivity() {
@@ -43,7 +44,8 @@ class MainActivity : BaseCoreActivity() {
     fun funcClick(index: Int) {
         when (index) {
             0 -> {
-                openPage(CameraCaptureActivity::class.java)
+//                openPage(CameraCaptureActivity::class.java)
+                CodecSample.convertYuv2Mp4_2(context = baseContext)
             }
             1 -> {
                 openPage(RenderImageActivity::class.java)

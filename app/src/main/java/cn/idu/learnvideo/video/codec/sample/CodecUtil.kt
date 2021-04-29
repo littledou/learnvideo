@@ -1,4 +1,4 @@
-package cn.idu.learnvideo.codec
+package cn.idu.learnvideo.video.codec.sample
 
 import android.media.MediaCodecInfo
 import android.media.MediaCodecList

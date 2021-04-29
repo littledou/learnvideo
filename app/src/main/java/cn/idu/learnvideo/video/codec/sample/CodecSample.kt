@@ -1,12 +1,15 @@
-package cn.idu.learnvideo.codec
+package cn.idu.learnvideo.video.codec.sample
 
 import android.content.Context
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.media.MediaMuxer
+import cn.idu.learnvideo.video.codec.encoder.CodecListener
+import cn.idu.learnvideo.video.codec.encoder.VideoEncoder
 import java.io.File
 import java.io.FileInputStream
+import java.nio.ByteBuffer
 import kotlin.system.measureTimeMillis
 
 class CodecSample {
@@ -47,7 +50,7 @@ class CodecSample {
             //定义混合器：输出并保存h.264码流为mp4
             val mediaMuxer =
                 MediaMuxer(
-                    "${context.filesDir}/test.mp4",
+                    saveMp4Path,
                     MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
                 );
             var muxerTrackIndex = -1
@@ -59,7 +62,7 @@ class CodecSample {
 
 
             //从文件中读取yuv码流，模拟输入流
-            FileInputStream("${context.filesDir}/test.yuv").use { fis ->
+            FileInputStream(yuvPath).use { fis ->
                 loop1@ while (true) {
                     //step1 将需要编码的数据逐帧送往编码器
                     if (!inputEnd) {
@@ -87,7 +90,7 @@ class CodecSample {
                                     inputQueueIndex,
                                     0,
                                     byteArray.size,
-                                    System.nanoTime() / 1000 - presentTimeUs,
+                                    System.nanoTime() / 1000,
                                     0
                                 )
                             } else {
@@ -100,11 +103,11 @@ class CodecSample {
                     if (inputEnd && !pushEnd) {
                         val inputQueueIndex = videoEncoder.dequeueInputBuffer(30);
                         if (inputQueueIndex > 0) {
-                            val pts: Long = System.nanoTime() / 1000 - presentTimeUs
+                            val pts: Long = System.nanoTime() / 1000
                             videoEncoder.queueInputBuffer(
                                 inputQueueIndex,
                                 0,
-                                byteArray.size,
+                                0,
                                 pts,
                                 MediaCodec.BUFFER_FLAG_END_OF_STREAM
                             )
@@ -152,6 +155,57 @@ class CodecSample {
                 videoEncoder.stop()
                 videoEncoder.release()
             }
+        }
+
+        fun convertYuv2Mp4_2(context: Context) {
+            val yuvPath = "${context.filesDir}/test.yuv"
+            val saveMp4Path = "${context.filesDir}/test.mp4"
+            File(saveMp4Path).deleteOnExit()
+
+            //定义混合器：输出并保存h.264码流为mp4
+            val mediaMuxer =
+                MediaMuxer(
+                    saveMp4Path,
+                    MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
+                );
+            var muxerTrackIndex = -1
+
+            val videoEncoder = VideoEncoder()
+            videoEncoder.setUpVideoCodec(1920, 1080)
+            videoEncoder.start()
+            videoEncoder.setCodecListener(object : CodecListener {
+                override fun formatUpdate(format: MediaFormat) {
+                    //step3.1 标记新的解码数据到来，在此添加视频轨道到混合器
+                    muxerTrackIndex = mediaMuxer.addTrack(format)
+                    mediaMuxer.start()
+                }
+
+                override fun bufferUpdate(buffer: ByteBuffer, bufferInfo: MediaCodec.BufferInfo) {
+                    mediaMuxer.writeSampleData(muxerTrackIndex, buffer, bufferInfo)
+                }
+
+                override fun bufferOutputEnd() {
+                    mediaMuxer.release()
+                    videoEncoder.stopWorld()
+                }
+            })
+
+
+            val byteArray = ByteArray(1920 * 1080 * 3 / 2)
+            var read = 0
+            FileInputStream(yuvPath).use { fis ->
+                while (true) {
+                    read = fis.read(byteArray)
+                    if (read == byteArray.size) {
+                        Thread.sleep(30)
+                        videoEncoder.putBuf(byteArray, 0, byteArray.size)
+                    } else {
+                        videoEncoder.putBufEnd()
+                        break
+                    }
+                }
+            }
+
         }
     }
 }
