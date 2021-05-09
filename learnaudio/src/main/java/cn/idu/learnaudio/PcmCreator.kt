@@ -10,7 +10,7 @@ import java.io.FileOutputStream
  */
 class PcmCreator(private val path: String) : Thread() {
 
-    var threadRunning = false;
+    var threadRunning = false
 
     override fun run() {
         super.run()

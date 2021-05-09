@@ -44,7 +44,6 @@ class CameraCaptureActivity : BaseCoreActivity() {
                     }
                     return 0
                 }
-
                 override fun analyseDataEnd(p0: Any?) {}
             })
         }
@@ -58,7 +57,7 @@ class CameraCaptureActivity : BaseCoreActivity() {
             MediaMuxer(
                 saveMp4Path,
                 MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
-            );
+            )
         var muxerTrackIndex = -1
 
         videoEncoder.setCodecListener(object : CodecListener {
