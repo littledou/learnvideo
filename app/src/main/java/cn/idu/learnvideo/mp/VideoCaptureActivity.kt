@@ -1,23 +1,24 @@
-package cn.idu.learnvideo.camera
+package cn.idu.learnvideo.mp
 
 import android.media.MediaCodec
 import android.media.MediaFormat
 import android.media.MediaMuxer
 import android.view.View
-import cn.idu.learnvideo.databinding.ActivityCameraCaptureBinding
-import cn.idu.learnvideo.video.codec.encoder.CodecListener
-import cn.idu.learnvideo.video.codec.encoder.VideoEncoder
+import cn.idu.learnvideo.databinding.ActivityVideoCaptureBinding
+import cn.idu.learnvideo.mp.codec.encoder.CodecListener
+import cn.idu.learnvideo.mp.codec.encoder.VideoEncoder
 import cn.readsense.module.base.BaseCoreActivity
 import cn.readsense.module.camera1.CameraView
 import cn.readsense.module.util.DLog
 import java.io.File
 import java.nio.ByteBuffer
+import kotlin.experimental.and
 
-class CameraCaptureActivity : BaseCoreActivity() {
-    lateinit var binding: ActivityCameraCaptureBinding
+class VideoCaptureActivity : BaseCoreActivity() {
+    lateinit var binding: ActivityVideoCaptureBinding
 
     override fun getLayoutView(): View {
-        binding = ActivityCameraCaptureBinding.inflate(layoutInflater)
+        binding = ActivityVideoCaptureBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -44,6 +45,7 @@ class CameraCaptureActivity : BaseCoreActivity() {
                     }
                     return 0
                 }
+
                 override fun analyseDataEnd(p0: Any?) {}
             })
         }
@@ -67,6 +69,10 @@ class CameraCaptureActivity : BaseCoreActivity() {
             }
 
             override fun bufferUpdate(buffer: ByteBuffer, bufferInfo: MediaCodec.BufferInfo) {
+                val data = ByteArray(buffer.limit())
+                buffer.get(data)
+                val nalu_type = (data[4] and 0x1F)
+                DLog.d("nalu_type: $nalu_type ： arr:${data[0]} ${data[1]} ${data[2]} ${data[3]} ${data[4]}")
                 mediaMuxer.writeSampleData(muxerTrackIndex, buffer, bufferInfo)
             }
 
@@ -77,14 +83,23 @@ class CameraCaptureActivity : BaseCoreActivity() {
         })
 
         binding.cameraview0.setOnClickListener {
-            DLog.d("录制：$capture")
-            capture = !capture
+
+            if (!capture) {
+                DLog.d("开始录制视频")
+                File(saveMp4Path).deleteOnExit()
+                capture = true
+            } else {
+                DLog.d("停止录制视频，文件存储与：$saveMp4Path")
+                capture = false
+                videoEncoder.putBufEnd()
+            }
         }
+
 
     }
 
     override fun onDestroy() {
-        videoEncoder.putBufEnd()
+
         super.onDestroy()
     }
 

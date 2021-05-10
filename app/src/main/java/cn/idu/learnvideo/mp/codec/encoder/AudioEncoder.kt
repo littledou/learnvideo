@@ -1,10 +1,14 @@
-package cn.idu.learnvideo.video.codec.encoder
+package cn.idu.learnvideo.mp.codec.encoder
 
 import android.media.AudioRecord
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
-import cn.idu.learnvideo.video.codec.*
+import cn.idu.learnvideo.mp.AUDIO_FORMAT
+import cn.idu.learnvideo.mp.CHANNEL
+import cn.idu.learnvideo.mp.DEST_BIT_RATE
+import cn.idu.learnvideo.mp.SAMPLE_RATE_IN_HZ
+import cn.idu.learnvideo.mp.codec.*
 import java.nio.ByteBuffer
 
 class AudioEncoder : BaseMediaCodec() {
@@ -12,11 +16,11 @@ class AudioEncoder : BaseMediaCodec() {
 
     init {
         createCodec("audio/mp4a-latm")
-        val format = MediaFormat.createAudioFormat(mime, SAMPLE_RATE_IN_HZ, CHANNEL)
+        val format = MediaFormat.createAudioFormat(mime, SAMPLE_RATE_IN_HZ, 2)
         format.setInteger(MediaFormat.KEY_BIT_RATE, DEST_BIT_RATE)
         //buffer 最大值
-        val bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ, CHANNEL, AUDIO_FORMAT)
-        format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, bufferSize)
+        val bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ, 2, AUDIO_FORMAT)
+        format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE,bufferSize)
         format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC)
         configEncoderBitrateMode(format)
         codec.start()

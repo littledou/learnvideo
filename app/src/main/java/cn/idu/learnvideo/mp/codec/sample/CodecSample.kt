@@ -1,12 +1,12 @@
-package cn.idu.learnvideo.video.codec.sample
+package cn.idu.learnvideo.mp.codec.sample
 
 import android.content.Context
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.media.MediaMuxer
-import cn.idu.learnvideo.video.codec.encoder.CodecListener
-import cn.idu.learnvideo.video.codec.encoder.VideoEncoder
+import cn.idu.learnvideo.mp.codec.encoder.CodecListener
+import cn.idu.learnvideo.mp.codec.encoder.VideoEncoder
 import java.io.File
 import java.io.FileInputStream
 import java.nio.ByteBuffer

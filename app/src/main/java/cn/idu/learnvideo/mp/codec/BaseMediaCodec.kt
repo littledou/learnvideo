@@ -1,12 +1,11 @@
-package cn.idu.learnvideo.video.codec
+package cn.idu.learnvideo.mp.codec
 
-import android.media.AudioRecord
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.os.Build
 import android.util.Log
-import cn.idu.learnvideo.video.codec.encoder.CodecListener
+import cn.idu.learnvideo.mp.codec.encoder.CodecListener
 import cn.readsense.module.util.DLog
 import java.nio.ByteBuffer
 
@@ -40,7 +39,7 @@ abstract class BaseMediaCodec : BaseCodec() {
                 configEncoderWithVBR(codec, format)
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.e(mime, "配置编解码器失败")
+                Log.e("MediaCodec", "配置编解码器失败: $mime")
             }
         }
     }
@@ -70,8 +69,8 @@ abstract class BaseMediaCodec : BaseCodec() {
     override fun run() {
         gatherThread = Thread {
             while (threadRunning) {
-                val outputQueueIndex = codec.dequeueOutputBuffer(bufferInfo, -1)
-                DLog.d("数据解码出队 $outputQueueIndex")
+                val outputQueueIndex = codec.dequeueOutputBuffer(bufferInfo, 1000)
+
                 when (outputQueueIndex) {
                     MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> {
                         formatUpdate(codec.outputFormat)
@@ -79,25 +78,34 @@ abstract class BaseMediaCodec : BaseCodec() {
                     MediaCodec.INFO_TRY_AGAIN_LATER -> {
                     }
                     else -> {
-                        when (bufferInfo.flags) {
-                            MediaCodec.BUFFER_FLAG_CODEC_CONFIG -> {
-                                // SPS or PPS, which should be passed by MediaFormat.
+                        if (outputQueueIndex > 0) {
+                            DLog.d("数据解码出队 $outputQueueIndex , bufferInfo.flags: ${bufferInfo.flags}")
+                            //拿到解码后的帧，解析该帧
+                            when (bufferInfo.flags) {
+                                MediaCodec.BUFFER_FLAG_CODEC_CONFIG -> {
+                                    // SPS or PPS, which should be passed by MediaFormat.
+                                    //编码前几帧会拿到SPS或PPS头，需要拼接到每个关键帧上
+                                    bufferUpdate(
+                                        codec.getOutputBuffer(outputQueueIndex)!!,
+                                        bufferInfo
+                                    )
+                                }
+                                MediaCodec.BUFFER_FLAG_END_OF_STREAM -> {
+                                    bufferInfo.set(0, 0, 0, bufferInfo.flags)
+                                    codec.releaseOutputBuffer(outputQueueIndex, false)
+                                    println("数据解码并获取完成,成功发出eof信号")
+                                    bufferOutputEnd()
+                                    break
+                                }
+                                else -> {
+                                    bufferUpdate(
+                                        codec.getOutputBuffer(outputQueueIndex)!!,
+                                        bufferInfo
+                                    )
+                                }
                             }
-                            MediaCodec.BUFFER_FLAG_END_OF_STREAM -> {
-                                bufferInfo.set(0, 0, 0, bufferInfo.flags)
-                                codec.releaseOutputBuffer(outputQueueIndex, false)
-                                println("数据解码并获取完成,成功发出eof信号")
-                                bufferOutputEnd()
-                                break
-                            }
-                            else -> {
-                                bufferUpdate(
-                                    codec.getOutputBuffer(outputQueueIndex)!!,
-                                    bufferInfo
-                                )
-                            }
+                            codec.releaseOutputBuffer(outputQueueIndex, false)
                         }
-                        codec.releaseOutputBuffer(outputQueueIndex, false)
                     }
                 }
             }
@@ -127,11 +135,13 @@ abstract class BaseMediaCodec : BaseCodec() {
             )
         }
     }
+
     abstract fun bufferUpdate(buffer: ByteBuffer, bufferInfo: MediaCodec.BufferInfo)
 
     private fun formatUpdate(format: MediaFormat) {
         listener?.formatUpdate(format)
     }
+
     private fun bufferOutputEnd() {
         listener?.bufferOutputEnd()
     }

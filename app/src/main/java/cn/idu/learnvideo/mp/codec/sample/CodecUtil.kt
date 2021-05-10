@@ -1,4 +1,4 @@
-package cn.idu.learnvideo.video.codec.sample
+package cn.idu.learnvideo.mp.codec.sample
 
 import android.media.MediaCodecInfo
 import android.media.MediaCodecList
@@ -19,7 +19,7 @@ class CodecUtil {
 
         fun findCoder(
             mimeType: String,
-            isEncoder: Boolean,
+            isEncoder: Boolean = true,
             isHard: Boolean = true
         ): MediaCodecInfo? {
             val mediaCodecList = MediaCodecList(MediaCodecList.REGULAR_CODECS)

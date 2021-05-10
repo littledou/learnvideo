@@ -1,4 +1,4 @@
-package cn.idu.learnvideo.video.codec
+package cn.idu.learnvideo.mp.codec
 
 import android.media.AudioFormat
 import java.lang.Exception
@@ -38,8 +38,3 @@ abstract class BaseCodec : Thread(), ICodec {
         join(1000)
     }
 }
-
-const val SAMPLE_RATE_IN_HZ = 44100 //采样率44.1KHz
-const val CHANNEL = AudioFormat.CHANNEL_IN_MONO //单声道，立体声：CHANNEL_IN_STEREO
-const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT //每个采样点16bit
-const val DEST_BIT_RATE = 128000 //编码码率

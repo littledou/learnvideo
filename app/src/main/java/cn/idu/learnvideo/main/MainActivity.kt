@@ -3,19 +3,20 @@ package cn.idu.learnvideo.main
 import android.Manifest
 import android.view.View
 import androidx.recyclerview.widget.ConcatAdapter
-import cn.idu.learnvideo.camera.CameraCaptureActivity
+import cn.idu.learnvideo.mp.VideoCaptureActivity
 import cn.idu.learnvideo.databinding.ActivityMainBinding
+import cn.idu.learnvideo.mp.AudioCaptureActivity
 import cn.idu.learnvideo.opengles.GlSample01TriangleActivity
 import cn.idu.learnvideo.opengles.GlSample02ImageActivity
 import cn.idu.learnvideo.opengles.GlSample03CameraActivity
 import cn.idu.learnvideo.renderimg.RenderImageActivity
-import cn.idu.learnvideo.video.codec.sample.CodecSample
 import cn.readsense.module.base.BaseCoreActivity
 
 class MainActivity : BaseCoreActivity() {
 
     var funcArray = arrayOf(
-        "视频YUV录制",
+        "视频Mp4录制",
+        "音频Mp3录制",
         "EGL图片渲染",
         "绘制三角形",
         "Java图片渲染",
@@ -44,19 +45,21 @@ class MainActivity : BaseCoreActivity() {
     fun funcClick(index: Int) {
         when (index) {
             0 -> {
-                openPage(CameraCaptureActivity::class.java)
-//                CodecSample.convertYuv2Mp4_2(context = baseContext)
+                openPage(VideoCaptureActivity::class.java)
             }
             1 -> {
-                openPage(RenderImageActivity::class.java)
+                openPage(AudioCaptureActivity::class.java)
             }
             2 -> {
-                openPage(GlSample01TriangleActivity::class.java)
+                openPage(RenderImageActivity::class.java)
             }
             3 -> {
-                openPage(GlSample02ImageActivity::class.java)
+                openPage(GlSample01TriangleActivity::class.java)
             }
             4 -> {
+                openPage(GlSample02ImageActivity::class.java)
+            }
+            5 -> {
                 openPage(GlSample03CameraActivity::class.java)
             }
         }

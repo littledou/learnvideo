@@ -1,6 +1,4 @@
-package cn.idu.learnvideo.video.codec
-
-import android.media.AudioFormat
+package cn.idu.learnvideo.mp.codec
 
 interface ICodec {
 
