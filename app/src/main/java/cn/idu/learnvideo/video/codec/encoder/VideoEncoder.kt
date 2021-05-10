@@ -35,16 +35,8 @@ class VideoEncoder : BaseMediaCodec() {
         codec.start()
     }
 
-    override fun formatUpdate(format: MediaFormat) {
-        listener?.formatUpdate(format)
-    }
-
     override fun bufferUpdate(buffer: ByteBuffer, bufferInfo: MediaCodec.BufferInfo) {
         listener?.bufferUpdate(buffer, bufferInfo)
-    }
-
-    fun setCodecListener(listener: CodecListener) {
-        this.listener = listener
     }
 
 }

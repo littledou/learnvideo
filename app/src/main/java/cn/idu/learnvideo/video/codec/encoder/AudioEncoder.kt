@@ -19,12 +19,7 @@ class AudioEncoder : BaseMediaCodec() {
         format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, bufferSize)
         format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC)
         configEncoderBitrateMode(format)
-//        codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
         codec.start()
-    }
-
-    override fun formatUpdate(format: MediaFormat) {
-        listener?.formatUpdate(format)
     }
 
     override fun bufferUpdate(buffer: ByteBuffer, bufferInfo: MediaCodec.BufferInfo) {

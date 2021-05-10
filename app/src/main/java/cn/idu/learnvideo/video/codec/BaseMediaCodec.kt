@@ -22,7 +22,7 @@ abstract class BaseMediaCodec : BaseCodec() {
 
     /**
      * video/avc: h.264
-     * video/hevc: h265
+     * video/hevc: h.265
      * audio/mp4a-latm: aac
      */
     fun createCodec(mime: String = "video/avc") {
@@ -127,11 +127,17 @@ abstract class BaseMediaCodec : BaseCodec() {
             )
         }
     }
-
-    abstract fun formatUpdate(format: MediaFormat)
     abstract fun bufferUpdate(buffer: ByteBuffer, bufferInfo: MediaCodec.BufferInfo)
+
+    private fun formatUpdate(format: MediaFormat) {
+        listener?.formatUpdate(format)
+    }
     private fun bufferOutputEnd() {
         listener?.bufferOutputEnd()
+    }
+
+    fun setCodecListener(listener: CodecListener) {
+        this.listener = listener
     }
 
     public fun putBufEnd() {
