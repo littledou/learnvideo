@@ -19,6 +19,9 @@ abstract class BaseMediaCodec : BaseCodec() {
     private val bufferInfo = MediaCodec.BufferInfo()
     protected var listener: CodecListener? = null
 
+    private var mCount = 0
+    private var startTime = 0L
+
     /**
      * video/avc: h.264
      * video/hevc: h.265
@@ -67,6 +70,7 @@ abstract class BaseMediaCodec : BaseCodec() {
 
 
     override fun run() {
+        startTime = System.nanoTime()
         gatherThread = Thread {
             while (threadRunning) {
                 val outputQueueIndex = codec.dequeueOutputBuffer(bufferInfo, 1000)
@@ -123,20 +127,27 @@ abstract class BaseMediaCodec : BaseCodec() {
         val inputQueueIndex = codec.dequeueInputBuffer(-1)
         DLog.d("数据入队 $inputQueueIndex")
         if (inputQueueIndex > 0) {
+            mCount++
+            println("getPTS:   -  " + getPTS1(mCount))
             val inputBuffer = codec.getInputBuffer(inputQueueIndex)
             inputBuffer?.clear()
             inputBuffer?.put(data)
+
             codec.queueInputBuffer(
                 inputQueueIndex,
                 0,
                 data.size,
-                System.nanoTime() / 1000,
+                getPTS1(mCount),
                 0
             )
         }
     }
 
     abstract fun bufferUpdate(buffer: ByteBuffer, bufferInfo: MediaCodec.BufferInfo)
+
+    fun getPTS1(count: Int): Long {
+        return (System.nanoTime() - startTime) / 1000
+    }
 
     private fun formatUpdate(format: MediaFormat) {
         listener?.formatUpdate(format)

@@ -1,9 +1,6 @@
 package cn.idu.learnvideo.mp
 
-import android.media.AudioRecord
-import android.media.MediaFormat
-import android.media.MediaMuxer
-import android.media.MediaRecorder
+import android.media.*
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -14,6 +11,7 @@ import cn.readsense.module.base.BaseCoreActivity
 import cn.readsense.module.util.DLog
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.ByteBuffer
 import kotlin.concurrent.thread
 
 class AudioCaptureActivity : BaseCoreActivity() {
@@ -27,13 +25,17 @@ class AudioCaptureActivity : BaseCoreActivity() {
     var isCapture = false
 
     override fun initView() {
+        //存储pcm裸数据
         val file_pcm = File("$filesDir/test.pcm")
-        val file_mp3 = File("$filesDir/test.mp3")
-
+        //直接FileOutputStream写出，存储编码完成的aac数据
+        val file_mp3 = File("$filesDir/test.aac")
+        //使用混合器mediaMuxer存储编码好的aac数据
+        val file_mp32 = File("$filesDir/test2.aac")
 
         binding.startRecord.setOnClickListener {
             file_pcm.deleteOnExit()
             file_mp3.deleteOnExit()
+            file_mp32.deleteOnExit()
             thread {
                 DLog.d("开始录制")
                 isCapture = true
@@ -56,7 +58,7 @@ class AudioCaptureActivity : BaseCoreActivity() {
                 //定义混合器：输出并保存编码后的aac为mp3
                 val mediaMuxer =
                     MediaMuxer(
-                        file_mp3.absolutePath,
+                        file_mp32.absolutePath,
                         MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
                     )
                 var muxerTrackIndex = -1
@@ -65,7 +67,8 @@ class AudioCaptureActivity : BaseCoreActivity() {
                 audioEncoder.setCodecListener(object : CodecListener {
                     override fun formatUpdate(format: MediaFormat) {
                         super.formatUpdate(format)
-
+                        muxerTrackIndex = mediaMuxer.addTrack(format)
+                        mediaMuxer.start()
                     }
 
                     override fun bufferUpdate(data: ByteArray) {
@@ -74,11 +77,19 @@ class AudioCaptureActivity : BaseCoreActivity() {
                         fos_mp3.write(data, 0, data.size)
                     }
 
+                    override fun bufferUpdate(
+                        buffer: ByteBuffer,
+                        bufferInfo: MediaCodec.BufferInfo
+                    ) {
+                        mediaMuxer.writeSampleData(muxerTrackIndex, buffer, bufferInfo)
+                    }
+
                     override fun bufferOutputEnd() {
                         super.bufferOutputEnd()
                         audioEncoder.stopWorld()
                         fos_mp3.flush()
                         fos_mp3.close()
+                        mediaMuxer.release()
                     }
                 })
                 audioEncoder.start()
