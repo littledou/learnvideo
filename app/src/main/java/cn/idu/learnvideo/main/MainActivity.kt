@@ -44,6 +44,7 @@ class MainActivity : BaseCoreActivity() {
 
     fun funcClick(index: Int) {
         when (index) {
+
             0 -> {
                 openPage(VideoCaptureActivity::class.java)
             }
