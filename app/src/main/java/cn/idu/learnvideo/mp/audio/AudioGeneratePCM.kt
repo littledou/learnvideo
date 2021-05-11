@@ -13,7 +13,7 @@ import java.io.FileOutputStream
  */
 class AudioGeneratePCM() : Thread() {
 
-    var threadRunning = false
+    private var threadRunning = false
 
     override fun run() {
         super.run()
@@ -30,7 +30,7 @@ class AudioGeneratePCM() : Thread() {
         val data = ByteArray(bufferSize)
         while (threadRunning) {
             val len = audioRecord.read(data, 0, data.size)
-
+            listener.invoke(data, 0, len)
         }
         audioRecord.stop()
     }
@@ -38,4 +38,6 @@ class AudioGeneratePCM() : Thread() {
     fun stopRecord() {
         threadRunning = false;
     }
+
+    lateinit var listener: (data: ByteArray, offset: Int, len: Int) -> Unit
 }

@@ -7,10 +7,10 @@ import cn.idu.learnvideo.mp.codec.BaseMediaCodec
 import java.nio.ByteBuffer
 
 class VideoEncoder : BaseMediaCodec() {
-    private val TAG = "VideoEncoder"
 
     init {
         createCodec("video/avc")
+        setTag("VideoEncoder")
     }
 
     fun setUpVideoCodec(width: Int, height: Int) {
@@ -28,8 +28,7 @@ class VideoEncoder : BaseMediaCodec() {
 //            MediaFormat.KEY_BITRATE_MODE,
 //            MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR//遵守用户设置的码率
 //        )
-        configEncoderBitrateMode(format)//设置码率模式，并
-        codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+        configEncoderBitrateMode(format)//设置码率模式
         codec.start()
     }
 

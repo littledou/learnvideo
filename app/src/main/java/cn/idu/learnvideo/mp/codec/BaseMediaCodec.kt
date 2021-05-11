@@ -21,6 +21,7 @@ abstract class BaseMediaCodec : BaseCodec() {
 
     private var mCount = 0
     private var startTime = 0L
+    private var TAG = "BaseMediaCodec"
 
     /**
      * video/avc: h.264
@@ -42,7 +43,7 @@ abstract class BaseMediaCodec : BaseCodec() {
                 configEncoderWithVBR(codec, format)
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.e("MediaCodec", "配置编解码器失败: $mime")
+                Log.e(TAG, "配置编解码器失败: $mime")
             }
         }
     }
@@ -55,6 +56,7 @@ abstract class BaseMediaCodec : BaseCodec() {
                 MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CQ
             )
         }
+        codec.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
 
     }
 
@@ -65,6 +67,7 @@ abstract class BaseMediaCodec : BaseCodec() {
                 MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR
             )
         }
+        codec.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
     }
 
 
@@ -82,7 +85,10 @@ abstract class BaseMediaCodec : BaseCodec() {
                     }
                     else -> {
                         if (outputQueueIndex > 0) {
-                            DLog.d("数据解码出队 $outputQueueIndex , bufferInfo.flags: ${bufferInfo.flags}")
+                            DLog.d(
+                                TAG,
+                                "数据出队 $outputQueueIndex , bufferInfo.flags: ${bufferInfo.flags}"
+                            )
                             //拿到解码后的帧，解析该帧
                             when (bufferInfo.flags) {
                                 MediaCodec.BUFFER_FLAG_CODEC_CONFIG -> {
@@ -96,7 +102,7 @@ abstract class BaseMediaCodec : BaseCodec() {
                                 MediaCodec.BUFFER_FLAG_END_OF_STREAM -> {
                                     bufferInfo.set(0, 0, 0, bufferInfo.flags)
                                     codec.releaseOutputBuffer(outputQueueIndex, false)
-                                    println("数据解码并获取完成,成功发出eof信号")
+                                    DLog.d(TAG, "数据解码并获取完成,成功发出eof信号")
                                     bufferOutputEnd()
                                     break
                                 }
@@ -124,10 +130,9 @@ abstract class BaseMediaCodec : BaseCodec() {
      */
     override fun dealWith(data: ByteArray) {
         val inputQueueIndex = codec.dequeueInputBuffer(-1)
-        DLog.d("数据入队 $inputQueueIndex")
+        DLog.d(TAG, "数据入队 $inputQueueIndex")
         if (inputQueueIndex > 0) {
             mCount++
-            println("getPTS:   -  " + getPTS1(mCount))
             val inputBuffer = codec.getInputBuffer(inputQueueIndex)
             inputBuffer?.clear()
             inputBuffer?.put(data)
@@ -161,7 +166,7 @@ abstract class BaseMediaCodec : BaseCodec() {
     }
 
     public fun putBufEnd() {
-        DLog.d("发送结束标记")
+        DLog.d(TAG, "发送结束标记")
         val inputQueueIndex = codec.dequeueInputBuffer(-1);
         if (inputQueueIndex > 0) {
             codec.queueInputBuffer(
@@ -179,8 +184,14 @@ abstract class BaseMediaCodec : BaseCodec() {
         try {
             gatherThread?.interrupt()
             gatherThread?.join(1000)
+            codec.stop()
+            codec.release()
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun setTag(s: String) {
+        TAG = s
     }
 }

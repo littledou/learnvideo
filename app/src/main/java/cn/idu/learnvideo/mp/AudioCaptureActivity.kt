@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import cn.idu.learnvideo.databinding.ActivityAudioCaptureBinding
+import cn.idu.learnvideo.mp.audio.AudioGeneratePCM
 import cn.idu.learnvideo.mp.codec.encoder.AudioEncoder
 import cn.idu.learnvideo.mp.codec.encoder.CodecListener
 import cn.readsense.module.base.BaseCoreActivity
@@ -22,96 +23,66 @@ class AudioCaptureActivity : BaseCoreActivity() {
         return binding.root
     }
 
-    var isCapture = false
-
+    lateinit var pcmCreate: AudioGeneratePCM
+    lateinit var audioEncoder: AudioEncoder
     override fun initView() {
-        //存储pcm裸数据
-        val file_pcm = File("$filesDir/test.pcm")
-        //直接FileOutputStream写出，存储编码完成的aac数据
-        val file_mp3 = File("$filesDir/test.aac")
         //使用混合器mediaMuxer存储编码好的aac数据
-        val file_mp32 = File("$filesDir/test2.aac")
+        val file_mp32 = File("$filesDir/test.aac")
 
         binding.startRecord.setOnClickListener {
-            file_pcm.deleteOnExit()
-            file_mp3.deleteOnExit()
             file_mp32.deleteOnExit()
-            thread {
-                DLog.d("开始录制")
-                isCapture = true
-                val bufferSize = AudioRecord.getMinBufferSize(
-                    SAMPLE_RATE_IN_HZ, CHANNEL, AUDIO_FORMAT
+            //定义混合器：输出并保存编码后的aac为mp3
+            val mediaMuxer =
+                MediaMuxer(
+                    file_mp32.absolutePath,
+                    MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
                 )
-                val audioRecord = AudioRecord(
-                    MediaRecorder.AudioSource.MIC,
-                    SAMPLE_RATE_IN_HZ,
-                    CHANNEL,
-                    AUDIO_FORMAT,
-                    bufferSize
-                )
+            var muxerTrackIndex = -1
 
-                audioRecord.startRecording()
-                val data = ByteArray(bufferSize)
-                val fos = FileOutputStream(file_pcm)
-                val fos_mp3 = FileOutputStream(file_mp3)
-
-                //定义混合器：输出并保存编码后的aac为mp3
-                val mediaMuxer =
-                    MediaMuxer(
-                        file_mp32.absolutePath,
-                        MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
-                    )
-                var muxerTrackIndex = -1
-
-                val audioEncoder = AudioEncoder()
-                audioEncoder.setCodecListener(object : CodecListener {
-                    override fun formatUpdate(format: MediaFormat) {
-                        super.formatUpdate(format)
-                        muxerTrackIndex = mediaMuxer.addTrack(format)
-                        mediaMuxer.start()
-                    }
-
-                    override fun bufferUpdate(data: ByteArray) {
-                        super.bufferUpdate(data)
-                        DLog.d("bufferUpdate ${data.size}")
-                        fos_mp3.write(data, 0, data.size)
-                    }
-
-                    override fun bufferUpdate(
-                        buffer: ByteBuffer,
-                        bufferInfo: MediaCodec.BufferInfo
-                    ) {
-                        mediaMuxer.writeSampleData(muxerTrackIndex, buffer, bufferInfo)
-                    }
-
-                    override fun bufferOutputEnd() {
-                        super.bufferOutputEnd()
-                        audioEncoder.stopWorld()
-                        fos_mp3.flush()
-                        fos_mp3.close()
-                        mediaMuxer.release()
-                    }
-                })
-                audioEncoder.start()
-
-                while (isCapture) {
-                    val len = audioRecord.read(data, 0, data.size)
-                    audioEncoder.putBuf(data, 0, len)
-                    fos.write(data, 0, len);
+            //创建编码器并启动
+            audioEncoder = AudioEncoder()
+            audioEncoder.start()
+            audioEncoder.setCodecListener(object : CodecListener {
+                override fun formatUpdate(format: MediaFormat) {
+                    super.formatUpdate(format)
+                    muxerTrackIndex = mediaMuxer.addTrack(format)
+                    mediaMuxer.start()
                 }
 
-                fos.flush()
-                fos.close()
+                override fun bufferUpdate(data: ByteArray) {
+                    super.bufferUpdate(data)//编码好的数据加上ADTS头后的数据
+                    DLog.d("bufferUpdate ${data.size}")
+                }
 
-                audioEncoder.putBufEnd()
-                audioRecord.stop()
-                DLog.d("录制结束")
+                override fun bufferUpdate(
+                    buffer: ByteBuffer,
+                    bufferInfo: MediaCodec.BufferInfo
+                ) {
+                    //直接将编码好的数据存到本地
+                    mediaMuxer.writeSampleData(muxerTrackIndex, buffer, bufferInfo)
+                }
+
+                override fun bufferOutputEnd() {
+                    super.bufferOutputEnd()
+                    audioEncoder.stopWorld()
+                    mediaMuxer.release()
+                }
+            })
+
+
+            //创建音频采集器并启动
+            pcmCreate = AudioGeneratePCM()
+            pcmCreate.listener = { data, offset, len ->
+                audioEncoder.putBuf(data, offset, len)//采集到的音频裸流pcm交给编码器编码
             }
+            pcmCreate.start()
+
         }
 
         binding.stopRecord.setOnClickListener {
-            isCapture = false
             DLog.d("停止录制")
+            pcmCreate.stopRecord()
+            audioEncoder.putBufEnd()
         }
     }
 }
