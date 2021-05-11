@@ -3,6 +3,7 @@ package cn.idu.learnvideo.mp.codec.encoder
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
+import cn.idu.learnvideo.mp.CHANNEL_NUMBERS
 import cn.idu.learnvideo.mp.DEST_BIT_RATE
 import cn.idu.learnvideo.mp.SAMPLE_RATE_IN_HZ
 import cn.idu.learnvideo.mp.codec.*
@@ -13,7 +14,7 @@ class AudioEncoder : BaseMediaCodec() {
 
     init {
         createCodec("audio/mp4a-latm")//MediaFormat.MIMETYPE_AUDIO_AAC
-        val format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, SAMPLE_RATE_IN_HZ, 1)
+        val format = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, SAMPLE_RATE_IN_HZ, CHANNEL_NUMBERS)
         format.setInteger(MediaFormat.KEY_BIT_RATE, DEST_BIT_RATE)
         format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 100 * 1024)
         format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC)

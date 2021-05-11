@@ -55,7 +55,7 @@ abstract class BaseMediaCodec : BaseCodec() {
                 MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CQ
             )
         }
-        codec.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+
     }
 
     private fun configEncoderWithVBR(codec: MediaCodec, outputFormat: MediaFormat) {
@@ -65,7 +65,6 @@ abstract class BaseMediaCodec : BaseCodec() {
                 MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR
             )
         }
-        codec.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
     }
 
 

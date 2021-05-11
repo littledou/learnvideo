@@ -4,9 +4,10 @@ import android.media.AudioFormat
 
 
 const val SAMPLE_RATE_IN_HZ = 44100 //采样率44.1KHz
-const val CHANNEL = AudioFormat.CHANNEL_IN_MONO //单声道，立体声：CHANNEL_IN_STEREO
+const val CHANNEL = AudioFormat.CHANNEL_IN_MONO //声道类型：1：单声道：CHANNEL_IN_MONO，2：立体声：CHANNEL_IN_STEREO
+const val CHANNEL_NUMBERS = 1 //声道类型：1：单声道：CHANNEL_IN_MONO，2：立体声：CHANNEL_IN_STEREO
 const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT //每个采样点16bit
-const val DEST_BIT_RATE = 128000 //编码码率
+const val DEST_BIT_RATE = 128000 //音频编码码率
 
 const val NAL_SLICE = 1 //非关键帧
 const val NAL_SLICE_DPA = 2
