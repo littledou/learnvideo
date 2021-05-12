@@ -12,12 +12,15 @@ EGLController::EGLController() {
 
 EGLController::~EGLController() {
     LOGD("~EGLController");
+    eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     eglDestroySurface(eglDisplay, eglSurface);
     eglSurface = EGL_NO_SURFACE;
-    eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     eglDestroyContext(eglDisplay, eglContext);
+    eglReleaseThread();
+    eglTerminate(eglDisplay);
     eglDisplay = EGL_NO_DISPLAY;
     eglContext = EGL_NO_CONTEXT;
+    eglConfig = NULL;
 }
 
 

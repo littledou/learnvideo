@@ -52,7 +52,7 @@ class TriangleTexture : ITexture {
     }
 
     override fun release() {
-        //TODO 暂未找到放入GLThread释放的方法
+        //TODO 暂未找到放入GLThread释放的方法, 可以自定义EGL环境来解决该问题
         //？？？：是否需要释放shader
 //        GLES20.glDisableVertexAttribArray(aPositionIndex)
 //        GLES20.glDeleteProgram(program)
