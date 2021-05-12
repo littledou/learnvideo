@@ -9,12 +9,11 @@ import cn.idu.learnvideo.mp.codec.encoder.CodecListener
 import cn.readsense.module.util.DLog
 import java.nio.ByteBuffer
 
-abstract class BaseMediaCodec : BaseCodec() {
-//    var inputBuffers: Array<ByteBuffer>? = null
-//    var outputBuffers: Array<ByteBuffer>? = null
-
-    lateinit var codec: MediaCodec
-    lateinit var mime: String
+abstract class BaseMediaCodec(
+    open var mime: String = "video/avc",
+    open var flags: Int = MediaCodec.CONFIGURE_FLAG_ENCODE
+) : BaseCodec() {
+    var codec: MediaCodec = MediaCodec.createEncoderByType(mime)
     private var gatherThread: Thread? = null
     private val bufferInfo = MediaCodec.BufferInfo()
     protected var listener: CodecListener? = null
@@ -22,16 +21,6 @@ abstract class BaseMediaCodec : BaseCodec() {
     private var mCount = 0
     private var startTime = 0L
     private var TAG = "BaseMediaCodec"
-
-    /**
-     * video/avc: h.264
-     * video/hevc: h.265
-     * audio/mp4a-latm: aac
-     */
-    fun createCodec(mime: String = "video/avc") {
-        this.mime = mime
-        codec = MediaCodec.createEncoderByType(mime)
-    }
 
     fun configEncoderBitrateMode(format: MediaFormat) {
         try {
@@ -56,7 +45,7 @@ abstract class BaseMediaCodec : BaseCodec() {
                 MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CQ
             )
         }
-        codec.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+        codec.configure(outputFormat, null, null, flags)
 
     }
 
@@ -67,7 +56,7 @@ abstract class BaseMediaCodec : BaseCodec() {
                 MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR
             )
         }
-        codec.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+        codec.configure(outputFormat, null, null, flags)
     }
 
 

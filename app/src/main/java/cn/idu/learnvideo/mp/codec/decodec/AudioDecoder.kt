@@ -1,4 +1,4 @@
-package cn.idu.learnvideo.mp.codec.encoder
+package cn.idu.learnvideo.mp.codec.decodec
 
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
@@ -10,7 +10,7 @@ import cn.idu.learnvideo.mp.codec.*
 import java.nio.ByteBuffer
 
 //"audio/mp4a-latm"
-class AudioEncoder : BaseMediaCodec(MediaFormat.MIMETYPE_AUDIO_AAC) {
+class AudioDecoder : BaseMediaCodec(MediaFormat.MIMETYPE_AUDIO_AAC, 0) {
     init {
         setTag("AudioEncoder")
         val format = MediaFormat.createAudioFormat(

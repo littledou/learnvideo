@@ -18,7 +18,7 @@ fun MediaExtractor.extractorMedia(frameIndex: Int, path2Save: String) {
 /**
  * 是否解复用出指定header，video/或audio/
  */
-fun MediaExtractor.findTargetStreamIndex(header: String): Int {
+fun MediaExtractor.findTargetStreamIndex(header: String="video/"): Int {
     val trackCount = trackCount
     for (i in 0 until trackCount) {
         val format = getTrackFormat(i)

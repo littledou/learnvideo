@@ -1,4 +1,4 @@
-package cn.idu.learnvideo.mp.codec.encoder
+package cn.idu.learnvideo.mp.codec.decodec
 
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
@@ -6,7 +6,7 @@ import android.media.MediaFormat
 import cn.idu.learnvideo.mp.codec.BaseMediaCodec
 import java.nio.ByteBuffer
 
-class VideoEncoder : BaseMediaCodec("video/avc") {
+class VideoDecoder : BaseMediaCodec("video/avc", 0) {
 
     init {
         setTag("VideoEncoder")
