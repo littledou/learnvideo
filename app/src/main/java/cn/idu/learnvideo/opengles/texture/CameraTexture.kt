@@ -38,10 +38,18 @@ class CameraTexture() : ITexture {
             "varying vec2 vTexCoord;" +
             "uniform samplerExternalOES yuvTexSampler;" +
             "void main(){" +
-            "  vec4 color =  texture2D(yuvTexSampler, vTexCoord);" +
-            "  float gray = (color.r + color.g + color.b)/3.0;" +
-            "  gl_FragColor = vec4(gray, gray, gray, 1.0);" +
+            "  gl_FragColor = texture2D(yuvTexSampler, vTexCoord);" +
             "}"
+    //拓展纹理灰度效果
+//    private val fragShaderSource = "#extension GL_OES_EGL_image_external : require\n" +
+//            "precision mediump float;" +
+//            "varying vec2 vTexCoord;" +
+//            "uniform samplerExternalOES yuvTexSampler;" +
+//            "void main(){" +
+//            "  vec4 color =  texture2D(yuvTexSampler, vTexCoord);" +
+//            "  float gray = (color.r + color.g + color.b)/3.0;" +
+//            "  gl_FragColor = vec4(gray, gray, gray, 1.0);" +
+//            "}"
 
     private var orthoMatrix = FloatArray(16)
     private var worldWidth: Float = -1f
@@ -58,14 +66,16 @@ class CameraTexture() : ITexture {
 
     /**
      * OpenGL物体坐标系
-     * -1, 1      1, 1
+     * A(-1, 1)      B(1, 1)
      * -----------
      * |        |
      * |        |
      * |        |
      * |        |
      * -----------
-     * -1, -1   1,- 1
+     * C(-1, -1)   D(1,- 1)
+     * CADB
+     * 绘制方向：CAD ADB
      */
     private val vertexPosition = floatArrayOf(
         -1.0f, -1.0f,//左下
@@ -73,6 +83,17 @@ class CameraTexture() : ITexture {
         1.0f, -1.0f,//
         1.0f, 1.0f
     )
+    /**
+     * OpenGL二维纹理坐标
+     * 0, 1      1, 1
+     * -----------
+     * |        |
+     * |        |
+     * |        |
+     * |        |
+     * -----------
+     * 0, 0   1, 0
+     */
 
     /**
      * 计算机二维纹理坐标
@@ -84,21 +105,46 @@ class CameraTexture() : ITexture {
      * |        |
      * -----------
      * 0, 1   1, 1
-     * 竖屏手机前置摄像头渲染，需顺时针转个90度，变换为
-     * 1,0      1,1
-     * -----------
-     * |        |
-     * |        |
-     * |        |
-     * |        |
-     * -----------
-     * 0,0      0,1
      */
+//    private val aTexCoord = floatArrayOf(
+//        0.0f, 1.0f,
+//        0.0f, 0.0f,
+//        1.0f, 1.0f,
+//        1.0f, 0.0f
+//    )
+    /*
+    * 竖屏手机前置摄像头渲染，需顺时针转个90度，变换为
+    * 1,0      1,1
+    * -----------
+    * |        |
+    * |        |
+    * |        |
+    * |        |
+    * -----------
+    * 0,0      0,1
+    */
+//    private val aTexCoord = floatArrayOf(
+//        0.0f, 0.0f,
+//        1.0f, 0.0f,
+//        0.0f, 1.0f,
+//        1.0f, 1.0f
+//    )
+    /*
+    * 竖屏手机前置摄像头可能会左右反转，通过反转纹理实现预览正常
+    * 1,1      1,0
+    * -----------
+    * |        |
+    * |        |
+    * |        |
+    * |        |
+    * -----------
+    * 0,1      0,0
+    */
     private val aTexCoord = floatArrayOf(
-        0.0f, 0.0f,
-        1.0f, 0.0f,
         0.0f, 1.0f,
-        1.0f, 1.0f
+        1.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f
     )
     private val vertexBuffer = fullFloatBuffer(vertexPosition)
     private var fragBuffer = fullFloatBuffer(aTexCoord)
@@ -120,7 +166,7 @@ class CameraTexture() : ITexture {
         sampler2DHandler = GLES20.glGetUniformLocation(program, "yuvTexSampler")
 
         //2D纹理一、创建2D纹理
-        var texture = IntArray(1)
+        val texture = IntArray(1)
         GLES20.glGenTextures(1, texture, 0)
         textureID = texture[0]
 
@@ -213,7 +259,7 @@ class CameraTexture() : ITexture {
                 right = 1 / right
             }
         }
-        println("$left , $right, $buttom, $top")
+//        println("$left , $right, $buttom, $top")
 
         Matrix.orthoM(
             orthoMatrix, 0,

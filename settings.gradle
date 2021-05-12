@@ -1,3 +1,4 @@
+include ':x264_codec'
 include ':glrenderer'
 include ':newffmpeg'
 include ':app', ':learnaudio'

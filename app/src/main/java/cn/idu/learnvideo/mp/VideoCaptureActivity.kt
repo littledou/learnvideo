@@ -7,7 +7,7 @@ import android.view.View
 import cn.idu.learnvideo.databinding.ActivityVideoCaptureBinding
 import cn.idu.learnvideo.mp.audio.AudioGeneratePCM
 import cn.idu.learnvideo.mp.codec.encoder.AudioEncoder
-import cn.idu.learnvideo.mp.codec.encoder.CodecListener
+import cn.idu.learnvideo.mp.codec.CodecListener
 import cn.idu.learnvideo.mp.codec.encoder.VideoEncoder
 import cn.readsense.module.base.BaseCoreActivity
 import cn.readsense.module.camera1.CameraView

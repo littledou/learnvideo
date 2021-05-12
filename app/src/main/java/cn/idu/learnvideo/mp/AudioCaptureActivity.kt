@@ -1,19 +1,15 @@
 package cn.idu.learnvideo.mp
 
 import android.media.*
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.View
 import cn.idu.learnvideo.databinding.ActivityAudioCaptureBinding
 import cn.idu.learnvideo.mp.audio.AudioGeneratePCM
 import cn.idu.learnvideo.mp.codec.encoder.AudioEncoder
-import cn.idu.learnvideo.mp.codec.encoder.CodecListener
+import cn.idu.learnvideo.mp.codec.CodecListener
 import cn.readsense.module.base.BaseCoreActivity
 import cn.readsense.module.util.DLog
 import java.io.File
-import java.io.FileOutputStream
 import java.nio.ByteBuffer
-import kotlin.concurrent.thread
 
 class AudioCaptureActivity : BaseCoreActivity() {
     lateinit var binding: ActivityAudioCaptureBinding

@@ -9,6 +9,7 @@ import cn.idu.learnvideo.databinding.ActivityGlSample03CameraBinding
 import cn.idu.learnvideo.opengles.renderer.SampleRenderer
 import cn.idu.learnvideo.opengles.texture.CameraTexture
 import cn.readsense.module.base.BaseCoreActivity
+import cn.readsense.module.util.DLog
 
 /**
  * 由
@@ -31,7 +32,6 @@ class GlSample03CameraActivity : BaseCoreActivity() {
         binding.glSurfaceview.setRenderer(renderer)
         binding.glSurfaceview.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
         videoTexture.getSurfaceTexture { surfaceTexture ->
-
             surfaceTexture.setOnFrameAvailableListener {
                 binding.glSurfaceview.requestRender()
             }
@@ -41,16 +41,16 @@ class GlSample03CameraActivity : BaseCoreActivity() {
             parameters!!.setPreviewSize(640, 480)
             camera?.parameters = parameters
             camera?.setPreviewTexture(surfaceTexture)
-            camera?.addCallbackBuffer(
-                ByteArray(
-                    640 * 480 * ImageFormat.getBitsPerPixel(
-                        ImageFormat.NV21
-                    ) / 8
-                )
-            )
-            camera?.setPreviewCallbackWithBuffer { data: ByteArray, camera: Camera ->
-                camera.addCallbackBuffer(data)
-            }
+//            camera?.addCallbackBuffer(
+//                ByteArray(
+//                    640 * 480 * ImageFormat.getBitsPerPixel(
+//                        ImageFormat.NV21
+//                    ) / 8
+//                )
+//            )
+//            camera?.setPreviewCallbackWithBuffer { data: ByteArray, camera: Camera ->
+//                camera.addCallbackBuffer(data)
+//            }
             camera?.startPreview()
 
         }

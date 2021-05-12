@@ -5,7 +5,7 @@ import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.media.MediaMuxer
-import cn.idu.learnvideo.mp.codec.encoder.CodecListener
+import cn.idu.learnvideo.mp.codec.CodecListener
 import cn.idu.learnvideo.mp.codec.encoder.VideoEncoder
 import java.io.File
 import java.io.FileInputStream

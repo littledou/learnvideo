@@ -28,6 +28,7 @@ class SampleRenderer(private val texture: ITexture) : GLSurfaceView.Renderer {
         texture.drawFrame();
     }
 
+
     fun release() {
         texture.release()
     }

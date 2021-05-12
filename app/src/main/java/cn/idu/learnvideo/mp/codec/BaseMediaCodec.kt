@@ -5,7 +5,6 @@ import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.os.Build
 import android.util.Log
-import cn.idu.learnvideo.mp.codec.encoder.CodecListener
 import cn.readsense.module.util.DLog
 import java.nio.ByteBuffer
 
@@ -16,10 +15,10 @@ abstract class BaseMediaCodec(
     var codec: MediaCodec = MediaCodec.createEncoderByType(mime)
     private var gatherThread: Thread? = null
     private val bufferInfo = MediaCodec.BufferInfo()
-    protected var listener: CodecListener? = null
+    protected var listener: CodecListener? = null //回调编码结果
 
-    private var mCount = 0
-    private var startTime = 0L
+    private var mCount = 0 //帧数
+    private var startTime = 0L //启动编解码时间
     private var TAG = "BaseMediaCodec"
 
     fun configEncoderBitrateMode(format: MediaFormat) {
