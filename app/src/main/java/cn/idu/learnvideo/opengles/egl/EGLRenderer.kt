@@ -40,6 +40,10 @@ class EGLRenderer {
         mDrawers.add(iTexture)
     }
 
+    fun updateTexImages() {
+        rendererThread.updateTexImages()
+    }
+
     /**
      * EGL环境下的所有操作（OpenGL ES API的调用）需要绑定到该线程执行
      */
@@ -65,7 +69,6 @@ class EGLRenderer {
             handler = object : Handler(Looper.myLooper()!!) {
                 override fun handleMessage(msg: Message) {
                     val state = msg.obj
-                    DLog.d("RendererState update: $state ${currentThread().id}  ${currentThread().name}")
                     when (state) {
                         RendererState.SURFACE_CREATE -> {
                             eglCore.createSurface(mSurfaceView?.get()?.holder?.surface)
@@ -79,7 +82,6 @@ class EGLRenderer {
                             mDrawers.map { it.createTexture() }
                         }
                         RendererState.SURFACE_CHANGE -> {
-                            DLog.d("SURFACE_CHANGE")
                             GLES20.glViewport(0, 0, mWidth, mHeight)
                             mDrawers.map {
                                 it.setWorldSize(mWidth, mHeight)
@@ -116,12 +118,10 @@ class EGLRenderer {
         }
 
         override fun surfaceDestroyed(holder: SurfaceHolder) {
-            handler.sendEmptyMessage(0)
             handler.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_DESTROY })
         }
 
         fun updateTexImages() {
-            handler.sendEmptyMessage(0)
             handler.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_RENDERER })
         }
     }

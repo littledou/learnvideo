@@ -1,5 +1,6 @@
 package cn.idu.learnvideo.opengles
 
+import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -26,15 +27,7 @@ class GlSample02ImageActivity : BaseCoreActivity() {
     override fun initView() {
         binding.glSurfaceview.setEGLContextClientVersion(2)
 
-        val targetPngPath = "${getExternalFilesDir("img")}/1.png"
-        File(targetPngPath).apply {
-            if (exists()) deleteOnExit()
-            FileUtils.copy(
-                assets.open("1.png"),
-                FileOutputStream(absolutePath)
-            )
-        }
-        val bitmap = BitmapUtil.decodeScaleImage(targetPngPath, 1000, 1000)
+        val bitmap = BitmapFactory.decodeStream(assets.open("1.png"))
         renderer = SampleRenderer(ImageTexture(bitmap))
         binding.glSurfaceview.setRenderer(renderer)
         binding.glSurfaceview.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
