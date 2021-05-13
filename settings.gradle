@@ -1,5 +1,5 @@
 include ':x264_codec'
-include ':glrenderer'
+include ':gltexture'
 include ':newffmpeg'
 include ':app', ':learnaudio'
 rootProject.name = "LearnVideo"

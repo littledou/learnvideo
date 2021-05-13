@@ -6,8 +6,7 @@ import android.os.Looper
 import android.os.Message
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import cn.idu.learnvideo.opengles.texture.ITexture
-import cn.readsense.module.util.DLog
+import cn.idu.glrenderer.texture.ITexture
 import java.lang.ref.WeakReference
 
 class EGLRenderer {
@@ -40,8 +39,8 @@ class EGLRenderer {
         mDrawers.add(iTexture)
     }
 
-    fun updateTexImages() {
-        rendererThread.updateTexImages()
+    fun updateTexImage() {
+        rendererThread.updateTexImage()
     }
 
     /**
@@ -61,7 +60,7 @@ class EGLRenderer {
         private val eglCore = EGLCore()
         private var mWidth = 0
         private var mHeight = 0
-        private lateinit var handler: Handler
+        private var handler: Handler? = null
 
         override fun run() {
             Looper.prepare()
@@ -79,23 +78,24 @@ class EGLRenderer {
                             GLES20.glEnable(GLES20.GL_BLEND)
                             GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
 
-                            mDrawers.map { it.createTexture() }
+                            mDrawers.map { it.surfaceCreated() }
                         }
                         RendererState.SURFACE_CHANGE -> {
                             GLES20.glViewport(0, 0, mWidth, mHeight)
                             mDrawers.map {
-                                it.setWorldSize(mWidth, mHeight)
+                                it.surfaceChanged(mWidth, mHeight)
                             }
-                            updateTexImages()
+                            updateTexImage()
                         }
                         RendererState.SURFACE_RENDERER -> {
                             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-                            mDrawers.map { it.drawFrame() }
+                            mDrawers.map { it.updateTexImage() }
                             eglCore.swapBuffers()
                         }
                         RendererState.SURFACE_DESTROY -> {
-                            mDrawers.map { it.release() }
+                            mDrawers.map { it.surfaceDestroyed() }
                             eglCore.release()
+                            handler = null
                             Looper.myLooper()?.quitSafely()
                         }
                         else -> {
@@ -108,21 +108,21 @@ class EGLRenderer {
 
 
         override fun surfaceCreated(holder: SurfaceHolder) {
-            handler.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_CREATE })
+            handler?.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_CREATE })
         }
 
         override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
             mWidth = width
             mHeight = height
-            handler.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_CHANGE })
+            handler?.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_CHANGE })
         }
 
         override fun surfaceDestroyed(holder: SurfaceHolder) {
-            handler.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_DESTROY })
+            handler?.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_DESTROY })
         }
 
-        fun updateTexImages() {
-            handler.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_RENDERER })
+        fun updateTexImage() {
+            handler?.sendMessage(Message.obtain().apply { obj = RendererState.SURFACE_RENDERER })
         }
     }
 

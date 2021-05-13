@@ -2,19 +2,11 @@ package cn.idu.learnvideo.opengles
 
 import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.FileUtils
-import android.view.Surface
 import android.view.View
+import cn.idu.glrenderer.texture.ImageTexture
 import cn.idu.learnvideo.databinding.ActivityGlSample02ImageBinding
 import cn.idu.learnvideo.opengles.renderer.SampleRenderer
-import cn.idu.learnvideo.opengles.texture.ImageTexture
-import cn.idu.learnvideo.opengles.texture.TriangleTexture
 import cn.readsense.module.base.BaseCoreActivity
-import cn.readsense.module.util.BitmapUtil
-import java.io.File
-import java.io.FileOutputStream
 
 class GlSample02ImageActivity : BaseCoreActivity() {
     lateinit var binding: ActivityGlSample02ImageBinding

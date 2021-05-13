@@ -4,13 +4,10 @@ import android.os.FileUtils
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
-import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import cn.idu.glrenderer.ImagePreviewJni
 import cn.idu.learnvideo.databinding.ActivityRenderImageBinding
 import cn.readsense.module.base.BaseCoreActivity
 import cn.readsense.module.util.DLog
-import com.common.util.FileUtil
 import java.io.File
 import java.io.FileOutputStream
 
@@ -51,15 +48,15 @@ class RenderImageActivity : BaseCoreActivity(), SurfaceHolder.Callback {
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        ImagePreviewJni.init(targetPngPath, holder.surface)
+//        ImagePreviewJni.init(targetPngPath, holder.surface)
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        ImagePreviewJni.resize(width, height)
+//        ImagePreviewJni.resize(width, height)
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        ImagePreviewJni.stop()
+//        ImagePreviewJni.stop()
     }
 
 }

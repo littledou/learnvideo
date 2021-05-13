@@ -2,9 +2,10 @@ package cn.idu.learnvideo.opengles
 
 import android.opengl.GLSurfaceView
 import android.view.View
+import cn.idu.glrenderer.texture.NativeTriangleTexture
+import cn.idu.glrenderer.texture.TriangleTexture
 import cn.idu.learnvideo.databinding.ActivityGlSample01TriangleBinding
 import cn.idu.learnvideo.opengles.renderer.SampleRenderer
-import cn.idu.learnvideo.opengles.texture.TriangleTexture
 import cn.readsense.module.base.BaseCoreActivity
 
 class GlSample01TriangleActivity : BaseCoreActivity() {
@@ -17,13 +18,13 @@ class GlSample01TriangleActivity : BaseCoreActivity() {
 
     override fun initView() {
         binding.glSurfaceview.setEGLContextClientVersion(2)
-        renderer = SampleRenderer(TriangleTexture())
+        renderer = SampleRenderer(NativeTriangleTexture())
         binding.glSurfaceview.setRenderer(renderer)
         binding.glSurfaceview.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
     }
 
     override fun onDestroy() {
-        renderer.release()
+//        renderer.release()
         super.onDestroy()
     }
 }

@@ -22,7 +22,7 @@ class MainActivity : BaseCoreActivity() {
         "绘制三角形",
         "Java图片渲染",
         "视频渲染",
-        "EGL绘制三角形"
+        "自定义EGL绘制"
     )
 
     lateinit var binding: ActivityMainBinding

@@ -5,9 +5,9 @@ import android.hardware.Camera
 import android.opengl.GLSurfaceView
 import android.view.SurfaceHolder
 import android.view.View
+import cn.idu.glrenderer.texture.CameraTexture
 import cn.idu.learnvideo.databinding.ActivityGlSample03CameraBinding
 import cn.idu.learnvideo.opengles.renderer.SampleRenderer
-import cn.idu.learnvideo.opengles.texture.CameraTexture
 import cn.readsense.module.base.BaseCoreActivity
 import cn.readsense.module.util.DLog
 
