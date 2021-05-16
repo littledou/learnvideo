@@ -11,6 +11,7 @@ add_library(libtexture STATIC
 add_library(egluse SHARED
         src/native-lib.cpp
         src/texture/texture_triangle.cpp
+        src/texture/texture_nv21.cpp
         )
 
 target_link_libraries(

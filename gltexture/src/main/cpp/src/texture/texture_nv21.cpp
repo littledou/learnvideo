@@ -2,17 +2,10 @@
 // Created by loki on 2021/5/13.
 //
 
-#include "texture_triangle.h"
+#include "texture_nv21.h"
 
 
-GLfloat vertices[] = {
-        -1.0f, -1.0f,
-        1.0f, -1.0f,
-        0.0f, 0.0f
-};
-GLushort indices[] = {0, 1, 2};
-
-void texture_triangle::surfaceCreated() {
+void texture_nv21::surfaceCreated() {
     char vertexSource[] = "#version 300 es                         \n"
                           "layout(location=0) in vec4 vPosition;   \n"
                           "void main()                             \n"
@@ -29,55 +22,53 @@ void texture_triangle::surfaceCreated() {
     program = ShaderUtil::createProgram(vertexSource, fragmentSource);
 }
 
-void texture_triangle::surfaceChanged(int w, int h) {
+void texture_nv21::surfaceChanged(int w, int h) {
 
 }
 
-void texture_triangle::surfaceDestroyed() {
+void texture_nv21::surfaceDestroyed() {
     if (program) {
         glDeleteProgram(program);
         program = GL_NONE;
     }
 }
 
-void texture_triangle::updateTexImage() {
+void texture_nv21::updateTexImage() {
     glUseProgram(program);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-    glEnableVertexAttribArray(0);
+
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, indices);
     glUseProgram(GL_NONE);
 }
 
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_cn_idu_glrenderer_texture_NativeTriangleTexture_surfaceCreatedJni(JNIEnv *env, jobject thiz) {
-    auto *texture = new texture_triangle();
+Java_cn_idu_glrenderer_texture_NativeNV21Texture_surfaceCreatedJni(JNIEnv *env, jobject thiz) {
+    auto *texture = new texture_nv21();
     texture->surfaceCreated();
     return reinterpret_cast<jlong>(texture);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_cn_idu_glrenderer_texture_NativeTriangleTexture_surfaceChangedJni(JNIEnv *env, jobject thiz,
-                                                                       jlong handler, jint w,
-                                                                       jint h) {
-    auto *texture = reinterpret_cast<texture_triangle *>(handler);
+Java_cn_idu_glrenderer_texture_NativeNV21Texture_surfaceChangedJni(JNIEnv *env, jobject thiz,
+                                                                   jlong handler, jint w,
+                                                                   jint h) {
+    auto *texture = reinterpret_cast<texture_nv21 *>(handler);
     texture->surfaceChanged(w, h);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_cn_idu_glrenderer_texture_NativeTriangleTexture_updateTexImageJni(JNIEnv *env, jobject thiz,
-                                                                       jlong handler) {
-    auto *texture = reinterpret_cast<texture_triangle *>(handler);
+Java_cn_idu_glrenderer_texture_NativeNV21Texture_updateTexImageJni(JNIEnv *env, jobject thiz,
+                                                                   jlong handler) {
+    auto *texture = reinterpret_cast<texture_nv21 *>(handler);
     texture->updateTexImage();
 }extern "C"
 JNIEXPORT void JNICALL
-Java_cn_idu_glrenderer_texture_NativeTriangleTexture_surfaceDestroyedJni(JNIEnv *env, jobject thiz,
-                                                                         jlong handler) {
-    auto *texture = reinterpret_cast<texture_triangle *>(handler);
+Java_cn_idu_glrenderer_texture_NativeNV21Texture_surfaceDestroyedJni(JNIEnv *env, jobject thiz,
+                                                                     jlong handler) {
+    auto *texture = reinterpret_cast<texture_nv21 *>(handler);
     texture->surfaceDestroyed();
     delete texture;
 }

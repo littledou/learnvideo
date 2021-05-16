@@ -25,7 +25,7 @@ class EGLSample01TriangleActivity : BaseCoreActivity() {
     override fun initView() {
         eglRenderer = EGLRenderer()
 
-//        eglRenderer.addTexture(NativeTriangleTexture())
+        eglRenderer.addTexture(NativeTriangleTexture())
 
 //        val bitmap = BitmapFactory.decodeStream(assets.open("1.png"))
 //        eglRenderer.addTexture(ImageTexture(bitmap))

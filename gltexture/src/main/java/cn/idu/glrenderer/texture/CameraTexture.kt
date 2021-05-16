@@ -33,13 +33,13 @@ class CameraTexture() : ITexture {
             "}"
 
     //拓展纹理
-    private val fragShaderSource = "#extension GL_OES_EGL_image_external : require\n" +
-            "precision mediump float;" +
-            "varying vec2 vTexCoord;" +
-            "uniform samplerExternalOES yuvTexSampler;" +
-            "void main(){" +
-            "  gl_FragColor = texture2D(yuvTexSampler, vTexCoord);" +
-            "}"
+//    private val fragShaderSource = "#extension GL_OES_EGL_image_external : require\n" +
+//            "precision mediump float;" +
+//            "varying vec2 vTexCoord;" +
+//            "uniform samplerExternalOES yuvTexSampler;" +
+//            "void main(){" +
+//            "  gl_FragColor = texture2D(yuvTexSampler, vTexCoord);" +
+//            "}"
     //拓展纹理灰度效果
 //    private val fragShaderSource = "#extension GL_OES_EGL_image_external : require\n" +
 //            "precision mediump float;" +
@@ -50,6 +50,17 @@ class CameraTexture() : ITexture {
 //            "  float gray = (color.r + color.g + color.b)/3.0;" +
 //            "  gl_FragColor = vec4(gray, gray, gray, 1.0);" +
 //            "}"
+
+    //拓展纹理灰度效果
+    private val fragShaderSource = "#extension GL_OES_EGL_image_external : require\n" +
+            "precision mediump float;" +
+            "varying vec2 vTexCoord;" +
+            "uniform samplerExternalOES yuvTexSampler;" +
+            "void main(){" +
+            "  vec4 color =  texture2D(yuvTexSampler, vTexCoord);" +
+            "  gl_FragColor = color+vec4(0.3, 0.3, 0.0, 0.0);" +//暖色效果
+//            "  gl_FragColor = color+vec4(0.0, 0.0, 0.2, 0.0);" +//冷色效果
+            "}"
 
     private var orthoMatrix = FloatArray(16)
     private var worldWidth: Float = -1f
