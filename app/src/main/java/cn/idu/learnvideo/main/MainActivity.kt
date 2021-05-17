@@ -42,7 +42,7 @@ class MainActivity : BaseCoreActivity() {
         headAdapter.flushCount(0)
     }
 
-    fun funcClick(index: Int) {
+    private fun funcClick(index: Int) {
         when (index) {
 
             0 -> {
@@ -71,10 +71,6 @@ class MainActivity : BaseCoreActivity() {
             }
         }
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onBackPressed() {

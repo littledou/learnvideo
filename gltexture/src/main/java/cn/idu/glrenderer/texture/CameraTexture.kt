@@ -67,7 +67,7 @@ class CameraTexture() : ITexture {
     private var worldHeight: Float = -1f
     private var textureWidth: Float = -1f
     private var textureHeight: Float = -1f
-    private var isFullScreen = false;
+    private var isFullScreen = true;
 
 
     private var aPositionIndex = 0
@@ -299,10 +299,11 @@ class CameraTexture() : ITexture {
 
 
     override fun surfaceDestroyed() {
-
+        GLES20.glDeleteProgram(program)
+        GLES20.glDeleteTextures(1, intArrayOf(textureID), 0)
     }
 
-    fun fullFloatBuffer(arr: FloatArray): FloatBuffer {
+    private fun fullFloatBuffer(arr: FloatArray): FloatBuffer {
         return ByteBuffer.allocateDirect(arr.size * 4).run {
             order(ByteOrder.nativeOrder())
             asFloatBuffer()

@@ -37,7 +37,8 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
 
     private var aPositionIndex = 0
     private var aTexCoordIndex = 1
-    private var sampler2DHandler = -1
+    //TODO 注释掉2D纹理在片段着色器上定义掉handler也可以正常显示图片？？？
+//    private var sampler2DHandler = -1
 
     /**
      * OpenGL物体坐标系
@@ -82,13 +83,16 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
         program = ShaderUtil.createProgram(vertexShaderSource, fragShaderSource)
         GLES20.glBindAttribLocation(program, aPositionIndex, "aPosition")
         GLES20.glBindAttribLocation(program, aTexCoordIndex, "aTexCoord")
+        //TODO 注释掉2D纹理在片段着色器上定义掉handler也可以正常显示图片？？？
+        //解释：当只有一个纹理时，yuvTexSampler默认就绑定在GL_TEXTURE0这个纹理上，也可以不用定义参数再来绑定
 //        sampler2DHandler = GLES20.glGetUniformLocation(program, "yuvTexSampler")
 
         //2D纹理一、创建2D纹理
-        var texture = IntArray(1)
+        val texture = IntArray(1)
         GLES20.glGenTextures(1, texture, 0)
         textureID = texture[0]
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID)
+
         GLES20.glTexParameteri(
             GLES20.GL_TEXTURE_2D,
             GLES20.GL_TEXTURE_MAG_FILTER,
@@ -110,6 +114,8 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
             GLES20.GL_CLAMP_TO_EDGE
         )//T轴归一化
 
+        //解绑纹理
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, GLES20.GL_NONE)
     }
 
     override fun updateTexImage() {
@@ -123,15 +129,19 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
         //2D纹理二、激活纹理并向2D纹理上绑定数据
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)//激活指定纹理单元
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID)//绑定纹理ID到纹理单元
-        GLES20.glUniform1i(sampler2DHandler, 0);//将激活到纹理单元传递到着色器里
-        //绑定位图到被激活的纹理单元
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, mBitmap, 0)
 
+        //TODO 注释掉2D纹理在片段着色器上定义的handler也可以正常显示图片？？？
+        //解释：当只有一个纹理时，yuvTexSampler默认就绑定在GL_TEXTURE0这个纹理上，也可以不用定义参数再来绑定
+        //GLES20.glUniform1i(sampler2DHandler, 0);//将激活到纹理单元传递到着色器里，此处x：0为前面激活的纹理id
+
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)//解绑纹理
     }
 
 
     override fun surfaceDestroyed() {
+        GLES20.glDeleteTextures(1, intArrayOf(textureID), 0)
         GLES20.glDeleteProgram(program);
     }
 
