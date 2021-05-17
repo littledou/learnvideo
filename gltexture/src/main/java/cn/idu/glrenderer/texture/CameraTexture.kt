@@ -51,15 +51,15 @@ class CameraTexture() : ITexture {
 //            "  gl_FragColor = vec4(gray, gray, gray, 1.0);" +
 //            "}"
 
-    //拓展纹理灰度效果
+    //拓展冷色、暖色纹理效果
     private val fragShaderSource = "#extension GL_OES_EGL_image_external : require\n" +
             "precision mediump float;" +
             "varying vec2 vTexCoord;" +
             "uniform samplerExternalOES yuvTexSampler;" +
             "void main(){" +
             "  vec4 color =  texture2D(yuvTexSampler, vTexCoord);" +
-            "  gl_FragColor = color+vec4(0.3, 0.3, 0.0, 0.0);" +//暖色效果
-//            "  gl_FragColor = color+vec4(0.0, 0.0, 0.2, 0.0);" +//冷色效果
+//            "  gl_FragColor = color+vec4(0.3, 0.3, 0.0, 0.0);" +//暖色效果
+            "  gl_FragColor = color+vec4(0.0, 0.0, 0.2, 0.0);" +//冷色效果
             "}"
 
     private var orthoMatrix = FloatArray(16)

@@ -132,7 +132,7 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
 
 
     override fun surfaceDestroyed() {
-
+        GLES20.glDeleteProgram(program);
     }
 
     fun fullFloatBuffer(arr: FloatArray): FloatBuffer {

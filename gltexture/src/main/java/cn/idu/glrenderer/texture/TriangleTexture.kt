@@ -29,7 +29,7 @@ class TriangleTexture : ITexture {
         0f, 0f//左上
     )
 
-    init {
+    override fun surfaceCreated() {
         vertexBuffer = ByteBuffer.allocateDirect(vertexCoords.size * 4).run {
             order(ByteOrder.nativeOrder())
             asFloatBuffer()
@@ -37,9 +37,6 @@ class TriangleTexture : ITexture {
             put(vertexCoords)
             position(0)
         }
-    }
-
-    override fun surfaceCreated() {
         program = ShaderUtil.createProgram(vertexShader, fragShader)
         GLES20.glBindAttribLocation(program, aPositionIndex, "aPosition")
     }
@@ -55,7 +52,6 @@ class TriangleTexture : ITexture {
     override fun surfaceDestroyed() {
         //TODO 暂未找到放入GLThread释放的方法, 可以自定义EGL环境来解决该问题
         //？？？：是否需要释放shader
-        GLES20.glDisableVertexAttribArray(aPositionIndex)
         GLES20.glDeleteProgram(program)
     }
 

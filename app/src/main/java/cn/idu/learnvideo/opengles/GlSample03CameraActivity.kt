@@ -41,16 +41,16 @@ class GlSample03CameraActivity : BaseCoreActivity() {
             parameters!!.setPreviewSize(640, 480)
             camera?.parameters = parameters
             camera?.setPreviewTexture(surfaceTexture)
-//            camera?.addCallbackBuffer(
-//                ByteArray(
-//                    640 * 480 * ImageFormat.getBitsPerPixel(
-//                        ImageFormat.NV21
-//                    ) / 8
-//                )
-//            )
-//            camera?.setPreviewCallbackWithBuffer { data: ByteArray, camera: Camera ->
-//                camera.addCallbackBuffer(data)
-//            }
+            camera?.addCallbackBuffer(
+                ByteArray(
+                    640 * 480 * ImageFormat.getBitsPerPixel(
+                        ImageFormat.NV21
+                    ) / 8
+                )
+            )
+            camera?.setPreviewCallbackWithBuffer { data: ByteArray, camera: Camera ->
+                camera.addCallbackBuffer(data)
+            }
             camera?.startPreview()
 
         }

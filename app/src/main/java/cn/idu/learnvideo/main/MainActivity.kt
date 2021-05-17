@@ -6,10 +6,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import cn.idu.learnvideo.mp.VideoCaptureActivity
 import cn.idu.learnvideo.databinding.ActivityMainBinding
 import cn.idu.learnvideo.mp.AudioCaptureActivity
-import cn.idu.learnvideo.opengles.EGLSample01TriangleActivity
-import cn.idu.learnvideo.opengles.GlSample01TriangleActivity
-import cn.idu.learnvideo.opengles.GlSample02ImageActivity
-import cn.idu.learnvideo.opengles.GlSample03CameraActivity
+import cn.idu.learnvideo.opengles.*
 import cn.idu.learnvideo.renderimg.RenderImageActivity
 import cn.readsense.module.base.BaseCoreActivity
 
@@ -22,7 +19,8 @@ class MainActivity : BaseCoreActivity() {
         "绘制三角形",
         "Java图片渲染",
         "视频渲染",
-        "自定义EGL绘制"
+        "自定义EGL绘制三角形",
+        "自定义EGL渲染相机"
     )
 
     lateinit var binding: ActivityMainBinding
@@ -67,6 +65,9 @@ class MainActivity : BaseCoreActivity() {
             }
             6 -> {
                 openPage(EGLSample01TriangleActivity::class.java)
+            }
+            7 -> {
+                openPage(EGLSample02CameraActivity::class.java)
             }
         }
 
