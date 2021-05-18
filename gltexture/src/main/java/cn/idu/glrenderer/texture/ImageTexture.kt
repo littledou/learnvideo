@@ -4,11 +4,14 @@ import android.graphics.Bitmap
 import android.opengl.GLES20
 import android.opengl.GLUtils
 import cn.idu.glrenderer.texture.ITexture
+import cn.idu.glrenderer.util.GLBufferUtil
 import cn.readsense.module.gleshelper.ShaderUtil
 import cn.readsense.module.util.BitmapUtil
+import cn.readsense.module.util.DLog
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.nio.IntBuffer
 
 /**
  * 1. 编译shader
@@ -17,7 +20,7 @@ import java.nio.FloatBuffer
  * 3. 绘制，绑定2D纹理
  * 4. 释放
  */
-class ImageTexture(val mBitmap: Bitmap) : ITexture {
+class ImageTexture(private val mBitmap: Bitmap) : ITexture {
 
     private var program = -1
     private val vertexShaderSource = "attribute vec4 aPosition;" +
@@ -75,8 +78,8 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
         1.0f, 1.0f,
         1.0f, 0.0f
     )
-    private val vertexBuffer = fullFloatBuffer(vertexPosition)
-    private var fragBuffer = fullFloatBuffer(aTexCoord)
+    private val vertexBuffer = GLBufferUtil.fullFloatBuffer(vertexPosition)
+    private var fragBuffer = GLBufferUtil.fullFloatBuffer(aTexCoord)
     private var textureID = -1
 
     override fun surfaceCreated() {
@@ -94,24 +97,16 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID)
 
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MAG_FILTER,
-            GLES20.GL_NEAREST
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST
         )//放大双线性过滤
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_MIN_FILTER,
-            GLES20.GL_NEAREST
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST
         )//缩小双线性过滤
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_WRAP_S,
-            GLES20.GL_CLAMP_TO_EDGE
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE
         )//S轴归一化，纹理坐标过1归1，过0归0
         GLES20.glTexParameteri(
-            GLES20.GL_TEXTURE_2D,
-            GLES20.GL_TEXTURE_WRAP_T,
-            GLES20.GL_CLAMP_TO_EDGE
+            GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE
         )//T轴归一化
 
         //解绑纹理
@@ -139,19 +134,9 @@ class ImageTexture(val mBitmap: Bitmap) : ITexture {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)//解绑纹理
     }
 
-
     override fun surfaceDestroyed() {
         GLES20.glDeleteTextures(1, intArrayOf(textureID), 0)
         GLES20.glDeleteProgram(program);
     }
 
-    fun fullFloatBuffer(arr: FloatArray): FloatBuffer {
-        return ByteBuffer.allocateDirect(arr.size * 4).run {
-            order(ByteOrder.nativeOrder())
-            asFloatBuffer()
-        }.apply {
-            put(arr)
-            position(0)
-        }
-    }
 }

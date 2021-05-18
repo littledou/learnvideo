@@ -5,7 +5,7 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+//    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 21
@@ -15,6 +15,17 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        externalNativeBuild {
+            cmake {
+//                abiFilters "armeabi-v7a"
+                cppFlags ""
+            }
+        }
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+        ndkVersion "$rootProject.ndkVersion"
     }
 
     externalNativeBuild {

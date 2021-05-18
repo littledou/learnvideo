@@ -5,7 +5,7 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+//    buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 21
@@ -25,7 +25,7 @@ android {
         ndk{
             abiFilters "armeabi-v7a"
         }
-        ndkVersion "$ndkVersion"
+        ndkVersion "$rootProject.ndkVersion"
     }
 
     buildTypes {

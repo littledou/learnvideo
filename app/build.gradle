@@ -5,7 +5,7 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+//    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "cn.idu.learnvideo"
@@ -24,7 +24,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a"
         }
-        ndkVersion "22.1.7171670"
+        ndkVersion "$rootProject.ndkVersion"
     }
 
     buildFeatures {

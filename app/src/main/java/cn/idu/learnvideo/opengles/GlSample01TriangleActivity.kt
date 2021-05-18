@@ -4,6 +4,8 @@ import android.opengl.GLSurfaceView
 import android.view.View
 import cn.idu.glrenderer.texture.NativeTriangleTexture
 import cn.idu.glrenderer.texture.TriangleTexture
+import cn.idu.glrenderer.texture.TriangleVAOTexture
+import cn.idu.glrenderer.texture.TriangleVBOTexture
 import cn.idu.learnvideo.databinding.ActivityGlSample01TriangleBinding
 import cn.idu.learnvideo.opengles.renderer.SampleRenderer
 import cn.readsense.module.base.BaseCoreActivity
@@ -17,8 +19,8 @@ class GlSample01TriangleActivity : BaseCoreActivity() {
     }
 
     override fun initView() {
-        binding.glSurfaceview.setEGLContextClientVersion(2)
-        renderer = SampleRenderer(NativeTriangleTexture())
+        binding.glSurfaceview.setEGLContextClientVersion(3)
+        renderer = SampleRenderer(TriangleVAOTexture())
         binding.glSurfaceview.setRenderer(renderer)
         binding.glSurfaceview.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
     }

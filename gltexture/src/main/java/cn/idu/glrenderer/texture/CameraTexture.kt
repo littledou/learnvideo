@@ -8,6 +8,7 @@ import android.opengl.GLES20
 import android.opengl.GLUtils
 import android.opengl.Matrix
 import cn.idu.glrenderer.texture.ITexture
+import cn.idu.glrenderer.util.GLBufferUtil
 import cn.readsense.module.gleshelper.ShaderUtil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -62,12 +63,12 @@ class CameraTexture() : ITexture {
             "  gl_FragColor = color+vec4(0.0, 0.0, 0.2, 0.0);" +//冷色效果
             "}"
 
-    private var orthoMatrix = FloatArray(16)
+    private var mMatrix = FloatArray(16)
     private var worldWidth: Float = -1f
     private var worldHeight: Float = -1f
     private var textureWidth: Float = -1f
     private var textureHeight: Float = -1f
-    private var isFullScreen = true;
+    private var isFullScreen = false;
 
 
     private var aPositionIndex = 0
@@ -157,8 +158,8 @@ class CameraTexture() : ITexture {
         0.0f, 0.0f,
         1.0f, 0.0f
     )
-    private val vertexBuffer = fullFloatBuffer(vertexPosition)
-    private var fragBuffer = fullFloatBuffer(aTexCoord)
+    private val vertexBuffer = GLBufferUtil.fullFloatBuffer(vertexPosition)
+    private var fragBuffer = GLBufferUtil.fullFloatBuffer(aTexCoord)
     private var textureID = -1
     private var surfaceTexture: SurfaceTexture? = null
 
@@ -210,22 +211,23 @@ class CameraTexture() : ITexture {
     }
 
     override fun updateTexImage() {
+        surfaceTexture?.updateTexImage()
         initOrthoMatrix()
         GLES20.glUseProgram(program)
 
-        GLES20.glVertexAttribPointer(aPositionIndex, 2, GLES20.GL_FLOAT, false, 0, vertexBuffer)
         GLES20.glEnableVertexAttribArray(aPositionIndex);
-        GLES20.glVertexAttribPointer(aTexCoordIndex, 2, GLES20.GL_FLOAT, false, 0, fragBuffer)
         GLES20.glEnableVertexAttribArray(aTexCoordIndex)
 
-        GLES20.glUniformMatrix4fv(uMartixIndex, 1, false, orthoMatrix, 0)
+        GLES20.glVertexAttribPointer(aPositionIndex, 2, GLES20.GL_FLOAT, false, 0, vertexBuffer)
+        GLES20.glVertexAttribPointer(aTexCoordIndex, 2, GLES20.GL_FLOAT, false, 0, fragBuffer)
+
+        GLES20.glUniformMatrix4fv(uMartixIndex, 1, false, mMatrix, 0)
         //2D纹理三、绘制2D纹理
         //2D纹理二、激活纹理并向2D纹理上绑定数据
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0)//激活指定纹理单元
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureID)//绑定纹理ID到纹理单元
         GLES20.glUniform1i(sampler2DHandler, 0);//将激活到纹理单元传递到着色器里
         //绑定位图到被激活的纹理单元
-        surfaceTexture?.updateTexImage()
 
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }
@@ -270,21 +272,30 @@ class CameraTexture() : ITexture {
                 right = 1 / right
             }
         }
-//        println("$left , $right, $buttom, $top")
-
         Matrix.orthoM(
-            orthoMatrix, 0,
+            mMatrix, 0,
             left, right,
             buttom, top,
             -1f, 6f
         )
-//        Matrix.setLookAtM(
-//            orthoMatrix, 0,
-//            0f, 0f, 5f,
-//            0f, 0f, 0f,
-//            0f, 1f, 0f
-//        )
 
+        //2D渲染也大可不必计算变换矩阵，直接使用也行投影矩阵
+//        val prjMatrix = FloatArray(16)
+//         Matrix.orthoM(
+//            prjMatrix, 0,
+//            left, right,
+//            buttom, top,
+//            -1f, 6f
+//        )
+//        val viewMatrix = FloatArray(16)
+//        Matrix.setLookAtM(
+//            viewMatrix, 0,
+//            0f, 0f, 5.0f,
+//            0f, 0f, 0f,
+//            0f, 1.0f, 0f
+//        )
+//        //计算变换矩阵
+//        Matrix.multiplyMM(mMatrix, 0, prjMatrix, 0, viewMatrix, 0)
     }
 
     override fun surfaceChanged(w: Int, h: Int) {
@@ -303,13 +314,4 @@ class CameraTexture() : ITexture {
         GLES20.glDeleteTextures(1, intArrayOf(textureID), 0)
     }
 
-    private fun fullFloatBuffer(arr: FloatArray): FloatBuffer {
-        return ByteBuffer.allocateDirect(arr.size * 4).run {
-            order(ByteOrder.nativeOrder())
-            asFloatBuffer()
-        }.apply {
-            put(arr)
-            position(0)
-        }
-    }
 }
