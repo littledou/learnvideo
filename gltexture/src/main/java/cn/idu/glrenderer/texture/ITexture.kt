@@ -5,7 +5,7 @@ interface ITexture {
     fun surfaceCreated()
 
     //绘制纹理
-    fun updateTexImage()
+    fun updateTexImage() {}
 
     //释放纹理
     fun surfaceDestroyed()
@@ -20,4 +20,6 @@ interface ITexture {
      *当前纹理大小
      */
     fun setTextureSize(w: Int, h: Int) {}
+
+    fun updateTexImage(data: ByteArray, width: Int, height: Int) {}
 }

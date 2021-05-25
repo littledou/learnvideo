@@ -43,10 +43,10 @@ class TriangleVBOTexture : ITexture {
         val vboIDs = IntArray(1)
         GLES30.glGenBuffers(1, vboIDs, 0)
         vertexVboId = vboIDs[0]
-        //绑定第一个VBO，拷贝顶点数组到显存
+        //绑定第一个VBO，拷贝顶点数组到显存，格式为GL_ARRAY_BUFFER
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vboIDs[0])
         GLES30.glBufferData(
-            GLES30.GL_ARRAY_BUFFER, vertexCoords.size*4, vertexBuffer, GLES30.GL_STATIC_DRAW
+            GLES30.GL_ARRAY_BUFFER, vertexCoords.size * 4, vertexBuffer, GLES30.GL_STATIC_DRAW
         )
 
     }
@@ -62,8 +62,6 @@ class TriangleVBOTexture : ITexture {
     }
 
     override fun surfaceDestroyed() {
-        //TODO 暂未找到放入GLThread释放的方法, 可以自定义EGL环境来解决该问题
-        //？？？：是否需要释放shader
         GLES30.glDeleteProgram(program)
         GLES30.glDeleteBuffers(1, intArrayOf(vertexVboId), 0)
     }

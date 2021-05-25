@@ -3,13 +3,13 @@ package cn.idu.learnvideo.opengles
 import android.graphics.ImageFormat
 import android.hardware.Camera
 import android.opengl.GLSurfaceView
-import android.view.SurfaceHolder
 import android.view.View
 import cn.idu.glrenderer.texture.CameraTexture
+import cn.idu.glrenderer.texture.NativeNV21Texture
 import cn.idu.learnvideo.databinding.ActivityGlSample03CameraBinding
 import cn.idu.learnvideo.opengles.renderer.SampleRenderer
+import cn.idu.learnvideo.opengles.renderer.SampleYUVRenderer
 import cn.readsense.module.base.BaseCoreActivity
-import cn.readsense.module.util.DLog
 
 /**
  * 由
@@ -17,6 +17,7 @@ import cn.readsense.module.util.DLog
 class GlSample03CameraActivity : BaseCoreActivity() {
     lateinit var binding: ActivityGlSample03CameraBinding
     lateinit var renderer: SampleRenderer
+    lateinit var yuvrenderer: SampleYUVRenderer
     var camera: Camera? = null
     override fun getLayoutView(): View {
         binding = ActivityGlSample03CameraBinding.inflate(layoutInflater)
@@ -24,7 +25,12 @@ class GlSample03CameraActivity : BaseCoreActivity() {
     }
 
     override fun initView() {
-//
+
+        binding.glSurfaceview2.setEGLContextClientVersion(3)
+        yuvrenderer = SampleYUVRenderer(NativeNV21Texture())
+        binding.glSurfaceview2.setRenderer(yuvrenderer)
+        binding.glSurfaceview2.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+
         binding.glSurfaceview.setEGLContextClientVersion(2)
         val videoTexture = CameraTexture()
         videoTexture.setTextureSize(480, 640)
@@ -50,6 +56,10 @@ class GlSample03CameraActivity : BaseCoreActivity() {
             )
             camera?.setPreviewCallbackWithBuffer { data: ByteArray, camera: Camera ->
                 camera.addCallbackBuffer(data)
+
+                yuvrenderer.updateTexImage(data, 640, 480)
+                binding.glSurfaceview2.requestRender()
+
             }
             camera?.startPreview()
 

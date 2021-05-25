@@ -71,8 +71,6 @@ class TriangleVAOTexture : ITexture {
     }
 
     override fun surfaceDestroyed() {
-        //TODO 暂未找到放入GLThread释放的方法, 可以自定义EGL环境来解决该问题
-        //？？？：是否需要释放shader
         GLES30.glDeleteProgram(program)
         GLES30.glDeleteBuffers(1, intArrayOf(vertexVboId), 0)
         GLES30.glDeleteVertexArrays(1, intArrayOf(vertexVaoId), 0)

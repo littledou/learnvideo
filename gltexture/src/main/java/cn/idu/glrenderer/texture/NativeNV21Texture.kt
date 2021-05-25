@@ -10,8 +10,12 @@ class NativeNV21Texture : ITexture, JniBase() {
         handle = surfaceCreatedJni()
     }
 
-    override fun updateTexImage() {
-
+    override fun updateTexImage(
+        data: ByteArray,
+        width: Int,
+        height: Int
+    ) {
+        updateTexImageJni(handle, 0, data, width, height)
     }
 
     override fun surfaceChanged(w: Int, h: Int) {
