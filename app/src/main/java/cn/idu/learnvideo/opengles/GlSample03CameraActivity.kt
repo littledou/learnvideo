@@ -26,8 +26,8 @@ class GlSample03CameraActivity : BaseCoreActivity() {
 
     override fun initView() {
 
-        binding.glSurfaceview2.setEGLContextClientVersion(3)
         yuvrenderer = SampleYUVRenderer(NativeNV21Texture())
+        binding.glSurfaceview2.setEGLContextClientVersion(3)
         binding.glSurfaceview2.setRenderer(yuvrenderer)
         binding.glSurfaceview2.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
 

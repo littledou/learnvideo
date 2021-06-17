@@ -25,9 +25,9 @@ class SampleYUVRenderer(private val texture: ITexture) : GLSurfaceView.Renderer 
         }
     }
 
-    var data: ByteArray? = null
-    var w: Int = 0
-    var h: Int = 0
+    private var data: ByteArray? = null
+    private var w: Int = 0
+    private var h: Int = 0
     fun updateTexImage(data: ByteArray, w: Int, h: Int) {
         if (this.data == null) {
             this.data = ByteArray(data.size)

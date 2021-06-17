@@ -3,6 +3,7 @@ project("LearnVideo")
 
 #加载头文件
 include_directories(./include)
+include_directories(./source/idecoder)
 include_directories(libs/ffmpeg/armeabi-v7a/include)
 include_directories(libs/x264lib/armeabi-v7a/include)
 include_directories(libs/lamelib/armeabi-v7a/include)
@@ -15,7 +16,11 @@ LINK_DIRECTORIES(libs/lamelib/armeabi-v7a/lib)
 LINK_DIRECTORIES(libs/fdk-aac/armeabi-v7a/lib)
 
 
-add_library(ffuse SHARED source/ffuse.cpp)
+add_library(ffuse SHARED
+        source/idecoder/BaseDecoder.cpp
+        source/fflog.cpp
+        source/util/fftime.c
+        )
 
 find_library(log-lib log)
 find_library(z-lib z)

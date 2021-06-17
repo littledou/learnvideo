@@ -1,7 +1,7 @@
-prefix=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a
+prefix=/Users/loki/Desktop/tools/extra/libs/ffmpeg/armeabi-v7a
 exec_prefix=${prefix}
-libdir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/lib
-includedir=/Users/loki/Desktop/tools/extra/lib/ffmpeg/armeabi-v7a/include
+libdir=/Users/loki/Desktop/tools/extra/libs/ffmpeg/armeabi-v7a/lib
+includedir=/Users/loki/Desktop/tools/extra/libs/ffmpeg/armeabi-v7a/include
 
 Name: libavfilter
 Description: FFmpeg audio/video filtering library

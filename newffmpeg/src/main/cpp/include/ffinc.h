@@ -11,6 +11,9 @@ extern "C" {
 #include "libswresample/swresample.h"
 #include "libavutil/pixdesc.h"
 #include <libavfilter/avfilter.h>
+#include<libavcodec/avcodec.h>
+#include <libavutil/frame.h>
+#include <libavutil/time.h>
 };
 
 #endif //LEARNVIDEO_FFINC_H
